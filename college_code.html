@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 校生游戏 - 源代码</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        body {
+            font-family: 'Press Start 2P', 'Courier New', monospace;
+            background: #1a1a2e;
+            min-height: 100vh;
+            color: #fff;
+            text-shadow: 2px 2px 0px #000;
+            padding: 20px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(45deg, #0f0f1a 25%, transparent 25%),
+                linear-gradient(-45deg, #0f0f1a 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #0f0f1a 75%),
+                linear-gradient(-45deg, transparent 75%, #0f0f1a 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #2d2d44;
+            border: 4px solid #00ff88;
+            box-shadow: 6px 6px 0px #000;
+        }
+
+        header h1 {
+            font-size: 0.9rem;
+            color: #00ff88;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 0.45rem;
+            color: #88ccff;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 10px 18px;
+            background: #2d2d44;
+            border: 3px solid #444;
+            color: #fff;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.45rem;
+            text-decoration: none;
+            transition: all 0.1s;
+            box-shadow: 3px 3px 0px #000;
+        }
+
+        .nav-btn:hover {
+            border-color: #00ff88;
+            color: #00ff88;
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px #000;
+        }
+
+        .nav-btn.active {
+            border-color: #00ff88;
+            color: #00ff88;
+            background: #00ff8822;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 15px;
+            background: #2d2d44;
+            border: 2px solid #555;
+            color: #fff;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.4rem;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 2px 2px 0px #000;
+        }
+
+        .tab-btn:hover {
+            border-color: #88ccff;
+            color: #88ccff;
+        }
+
+        .tab-btn.active {
+            border-color: #88ccff;
+            color: #88ccff;
+            background: #88ccff22;
+        }
+
+        .code-section {
+            background: #2d2d44;
+            border: 3px solid #555;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 4px 4px 0px #000;
+        }
+
+        .code-section h2 {
+            color: #00ff88;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px dashed #555;
+        }
+
+        .code-box {
+            background: #0a0a0a;
+            border: 2px solid #333;
+            padding: 15px;
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .code-box pre {
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+            font-size: 0.4rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .code-box pre .comment {
+            color: #888;
+        }
+
+        .code-box pre .keyword {
+            color: #ff69b4;
+        }
+
+        .code-box pre .string {
+            color: #ffd700;
+        }
+
+        .code-box pre .number {
+            color: #88ccff;
+        }
+
+        .code-box pre .function {
+            color: #ffaa00;
+        }
+
+        .copy-btn {
+            float: right;
+            padding: 5px 10px;
+            background: #1a1a2e;
+            border: 2px solid #555;
+            color: #fff;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.35rem;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.1s;
+        }
+
+        .copy-btn:hover {
+            border-color: #00ff88;
+            color: #00ff88;
+        }
+
+        .file-info {
+            font-size: 0.4rem;
+            color: #888;
+            margin-bottom: 15px;
+        }
+
+        .file-info span {
+            color: #88ccff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 3px dashed #555;
+            margin-top: 30px;
+        }
+
+        footer p {
+            color: #888;
+            font-size: 0.4rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 0.7rem;
+            }
+
+            .code-section {
+                padding: 15px;
+            }
+
+            .nav-btn, .tab-btn {
+                padding: 8px 12px;
+                font-size: 0.4rem;
+            }
+
+            .code-box pre {
+                font-size: 0.35rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💻 校生游戏 - 源代码</h1>
+            <p>游戏核心代码展示</p>
+        </header>
+
+        <div class="nav-links">
+            <a href="http://localhost:8080" class="nav-btn" target="_blank">🎮 游戏入口</a>
+            <a href="college_report.html" class="nav-btn">📋 说明报告</a>
+            <a href="college_code.html" class="nav-btn active">💻 源代码</a>
+            <a href="index.html" class="nav-btn">🏠 返回主页</a>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="script">script.js</button>
+            <button class="tab-btn" data-tab="data">data.js</button>
+            <button class="tab-btn" data-tab="style">style.css</button>
+        </div>
+
+        <!-- script.js -->
+        <div class="tab-content active" id="script">
+            <div class="code-section">
+                <h2>📄 script.js - 游戏核心逻辑</h2>
+                <div class="file-info">文件大小: ~45KB | 代码行数: 457行</div>
+                <button class="copy-btn" onclick="copyCode('script-code')">复制代码</button>
+                <div class="code-box">
+                    <pre id="script-code"><span class="comment">// 游戏状态</span>
+let gameData = {
+    day: 1,
+    timeOfDay: 'morning', <span class="comment">// morning, afternoon, evening</span>
+    study: 50,
+    money: 1000,
+    social: 40,
+    energy: 100,
+    mood: 70,
+    npcs: {
+        liying: { favor: 20 },
+        wanghao: { favor: 15 },
+        chenyue: { favor: 25 },
+        zhangwei: { favor: 30 },
+        linxia: { favor: 10 }
+    },
+    eventLog: ['欢迎来到大学生活！选择一个地点开始你的第一天吧。']
+};
+
+<span class="comment">// 初始化游戏</span>
+function initGame() {
+    <span class="comment">// 绑定事件</span>
+    document.getElementById('newGameBtn').addEventListener('click', startNewGame);
+    document.getElementById('loadGameBtn').addEventListener('click', loadGame);
+    document.getElementById('saveBtn').addEventListener('click', saveGame);
+    document.getElementById('menuBtn').addEventListener('click', openMenu);
+    
+    <span class="comment">// 绑定地点点击事件</span>
+    document.querySelectorAll('.location-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const locationId = card.dataset.location;
+            handleLocationClick(locationId);
+        });
+    });
+    
+    <span class="comment">// 检查是否有存档</span>
+    const saveData = localStorage.getItem('collegeSimSave');
+    if (saveData) {
+        document.getElementById('loadGameBtn').style.display = 'inline-block';
+    }
+}
+
+<span class="comment">// 开始新游戏</span>
+function startNewGame() {
+    gameData = {
+        day: 1,
+        timeOfDay: 'morning',
+        study: 50,
+        money: 1000,
+        social: 40,
+        energy: 100,
+        mood: 70,
+        npcs: {
+            liying: { favor: 20 },
+            wanghao: { favor: 15 },
+            chenyue: { favor: 25 },
+            zhangwei: { favor: 30 },
+            linxia: { favor: 10 }
+        },
+        eventLog: ['欢迎来到大学生活！选择一个地点开始你的第一天吧。']
+    };
+    
+    updateUI();
+    showScreen('game');
+}
+
+<span class="comment">// 更新UI</span>
+function updateUI() {
+    <span class="comment">// 更新日期和时间</span>
+    ui.dayNum.textContent = gameData.day;
+    ui.timeOfDay.textContent = timeNames[gameData.timeOfDay];
+    
+    <span class="comment">// 更新属性条</span>
+    updateStat('study', gameData.study);
+    updateStat('money', gameData.money);
+    updateStat('social', gameData.social);
+    updateStat('energy', gameData.energy);
+    updateStat('mood', gameData.mood);
+    
+    <span class="comment">// 更新事件日志</span>
+    updateEventLog();
+    
+    <span class="comment">// 更新NPC列表</span>
+    updateNPCList();
+}
+
+<span class="comment">// 处理地点点击</span>
+function handleLocationClick(locationId) {
+    <span class="comment">// 检查体力</span>
+    if (gameData.energy <= 0) {
+        addEventLog('你太累了，需要休息！');
+        return;
+    }
+    
+    const location = locations[locationId];
+    if (!location) return;
+    
+    <span class="comment">// 应用地点效果</span>
+    applyEffects(location.effects, location.name);
+    
+    <span class="comment">// 检查是否触发地点事件</span>
+    if (location.events && location.events.length > 0 && Math.random() < 0.3) {
+        const event = getRandomEvent(location.events);
+        if (event) {
+            showEventModal(event);
+            return;
+        }
+    }
+    
+    <span class="comment">// 检查是否触发全局随机事件</span>
+    if (Math.random() < 0.15) {
+        const event = getGlobalRandomEvent();
+        if (event) {
+            showEventModal(event);
+            return;
+        }
+    }
+    
+    <span class="comment">// 更新时间</span>
+    advanceTime();
+}
+
+<span class="comment">// 应用效果</span>
+function applyEffects(effects, locationName) {
+    let logText = `你去了${locationName}。`;
+    const effectTexts = [];
+    
+    if (effects.study) {
+        gameData.study = clamp(gameData.study + effects.study, 0, 100);
+        effectTexts.push(effects.study > 0 ? `学业+${effects.study}` : `学业${effects.study}`);
+    }
+    <span class="comment">// ... 其他属性处理</span>
+    
+    if (effectTexts.length > 0) {
+        logText += ' ' + effectTexts.join('，');
+    }
+    
+    addEventLog(logText);
+    updateUI();
+}
+
+<span class="comment">// 推进时间</span>
+function advanceTime() {
+    const currentIndex = timeOrder.indexOf(gameData.timeOfDay);
+    
+    if (currentIndex < timeOrder.length - 1) {
+        gameData.timeOfDay = timeOrder[currentIndex + 1];
+    } else {
+        <span class="comment">// 进入下一天</span>
+        gameData.day++;
+        gameData.timeOfDay = 'morning';
+        
+        <span class="comment">// 每天恢复少量体力和心情</span>
+        gameData.energy = clamp(gameData.energy + 10, 0, 100);
+        gameData.mood = clamp(gameData.mood + 5, 0, 100);
+        
+        <span class="comment">// 检查游戏是否结束</span>
+        if (gameData.day > 120) {
+            showEnding();
+            return;
+        }
+        
+        addEventLog(`=== 第${gameData.day}天 ===`);
+    }
+    
+    updateUI();
+}
+
+<span class="comment">// 保存游戏</span>
+function saveGame() {
+    const saveData = {
+        gameData: gameData,
+        savedAt: new Date().toISOString()
+    };
+    localStorage.setItem('collegeSimSave', JSON.stringify(saveData));
+    addEventLog('💾 游戏已保存！');
+    closeMenu();
+}
+
+<span class="comment">// 加载游戏</span>
+function loadGame() {
+    const saveData = localStorage.getItem('collegeSimSave');
+    if (!saveData) {
+        addEventLog('❌ 没有找到存档！');
+        return;
+    }
+    
+    try {
+        const parsed = JSON.parse(saveData);
+        gameData = parsed.gameData;
+        updateUI();
+        showScreen('game');
+        addEventLog(`📥 已加载存档`);
+    } catch (e) {
+        addEventLog('❌ 存档损坏！');
+    }
+    
+    closeMenu();
+}
+
+<span class="comment">// 页面加载完成后初始化</span>
+document.addEventListener('DOMContentLoaded', initGame);</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- data.js -->
+        <div class="tab-content" id="data">
+            <div class="code-section">
+                <h2>📄 data.js - 游戏数据配置</h2>
+                <div class="file-info">文件大小: ~15KB | 代码行数: 442行</div>
+                <button class="copy-btn" onclick="copyCode('data-code')">复制代码</button>
+                <div class="code-box">
+                    <pre id="data-code"><span class="comment">// 地点数据</span>
+const locations = {
+    classroom: {
+        name: '教学楼',
+        icon: '🏛️',
+        description: '认真学习，提升学业成绩',
+        effects: {
+            study: 15,
+            energy: -20,
+            mood: -5
+        },
+        events: ['class_event_1', 'class_event_2', 'class_event_3']
+    },
+    library: {
+        name: '图书馆',
+        icon: '📖',
+        description: '安静的学习环境',
+        effects: {
+            study: 20,
+            energy: -15,
+            mood: 5
+        },
+        events: ['library_event_1', 'library_event_2']
+    },
+    dormitory: {
+        name: '宿舍',
+        icon: '🏠',
+        description: '休息恢复体力',
+        effects: {
+            energy: 30,
+            mood: 5,
+            study: -5
+        },
+        events: ['dorm_event_1', 'dorm_event_2', 'dorm_event_3']
+    },
+    canteen: {
+        name: '食堂',
+        icon: '🍜',
+        description: '补充能量，恢复体力',
+        effects: {
+            energy: 25,
+            mood: 10,
+            money: -20
+        },
+        events: ['canteen_event_1', 'canteen_event_2']
+    },
+    club: {
+        name: '社团中心',
+        icon: '🎭',
+        description: '结交朋友，提升社交',
+        effects: {
+            social: 15,
+            energy: -15,
+            mood: 10,
+            study: -5
+        },
+        events: ['club_event_1', 'club_event_2', 'club_event_3']
+    },
+    outside: {
+        name: '校外区域',
+        icon: '🌆',
+        description: '打工赚钱或逛街',
+        effects: {
+            money: 100,
+            energy: -25,
+            mood: -5,
+            study: -5
+        },
+        events: ['outside_event_1', 'outside_event_2', 'outside_event_3']
+    }
+};
+
+<span class="comment">// 随机事件数据</span>
+const events = {
+    class_event_1: {
+        title: '课堂提问',
+        description: '老师突然点名提问，你能回答出来吗？',
+        choices: [
+            { text: '积极回答', effects: { study: 10, social: 5, mood: 5 } },
+            { text: '低头装睡', effects: { mood: -10, study: -5 } },
+            { text: '求助同学', effects: { social: -5, study: 5 } }
+        ]
+    },
+    <span class="comment">// ... 更多事件定义</span>
+};
+
+<span class="comment">// NPC数据</span>
+const npcs = {
+    liying: {
+        name: '李颖',
+        avatar: '👩‍🎓',
+        description: '学霸级人物，成绩优异',
+        location: ['classroom', 'library'],
+        favoriteStats: ['study'],
+        initialFavor: 20,
+        dialogues: {
+            low: ['你好...', '我要去图书馆学习了'],
+            medium: ['最近学习怎么样？', '一起去图书馆吧'],
+            high: ['有你在身边学习效率更高呢~', '周末有空一起去自习吗？']
+        }
+    },
+    <span class="comment">// ... 更多NPC定义</span>
+};
+
+<span class="comment">// 结局数据</span>
+const endings = {
+    academic: {
+        title: '🎓 学术之星',
+        image: '🏆',
+        description: '你专注于学业，成绩名列前茅...',
+        required: { study: 80 }
+    },
+    social: {
+        title: '👑 社交达人',
+        image: '🎉',
+        description: '你广交朋友，活跃于各个社团...',
+        required: { social: 80 }
+    },
+    <span class="comment">// ... 更多结局定义</span>
+};
+
+<span class="comment">// 判断结局</span>
+function determineEnding(gameData) {
+    const { study, money, social, energy, mood, npcs } = gameData;
+    
+    <span class="comment">// 检查恋爱结局</span>
+    const maxFavor = Math.max(...Object.values(npcs).map(n => n.favor));
+    if (maxFavor >= 80) {
+        return endings.lover;
+    }
+    
+    <span class="comment">// 检查学术结局</span>
+    if (study >= 80) {
+        return endings.academic;
+    }
+    
+    <span class="comment">// 检查社交结局</span>
+    if (social >= 80) {
+        return endings.social;
+    }
+    
+    <span class="comment">// 检查财富结局</span>
+    if (money >= 5000) {
+        return endings.wealthy;
+    }
+    
+    <span class="comment">// 默认结局</span>
+    return endings.normal;
+}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- style.css -->
+        <div class="tab-content" id="style">
+            <div class="code-section">
+                <h2>📄 style.css - 游戏样式</h2>
+                <div class="file-info">文件大小: ~30KB | 代码行数: 669行</div>
+                <button class="copy-btn" onclick="copyCode('style-code')">复制代码</button>
+                <div class="code-box">
+                    <pre id="style-code">* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+body {
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    background: #1a1a2e;
+    min-height: 100vh;
+    color: #fff;
+    text-shadow: 2px 2px 0px #000;
+}
+
+<span class="comment">/* 马赛克背景 */</span>
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(45deg, #0f0f1a 25%, transparent 25%),
+        linear-gradient(-45deg, #0f0f1a 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #0f0f1a 75%),
+        linear-gradient(-45deg, transparent 75%, #0f0f1a 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+<span class="comment">/* 按钮样式 */</span>
+.btn {
+    padding: 15px 25px;
+    border: 3px solid;
+    background: #444466;
+    color: #fff;
+    font-family: 'PressStart2P', monospace;
+    font-size: 0.6rem;
+    cursor: pointer;
+    transition: all 0.1s;
+    box-shadow: 3px 3px 0px #000;
+}
+
+.btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #000;
+}
+
+.btn-primary {
+    border-color: #00ff88;
+    color: #00ff88;
+}
+
+.btn-primary:hover {
+    background: #00ff88;
+    color: #1a1a2e;
+}
+
+<span class="comment">/* 属性条容器 */</span>
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.stat-item {
+    background: #1a1a2e;
+    border: 2px solid #444;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.stat-bar {
+    height: 8px;
+    background: #333;
+    border: 1px solid #555;
+    overflow: hidden;
+    margin: 4px 0;
+}
+
+.stat-fill {
+    height: 100%;
+    background: #00ff88;
+    transition: width 0.2s;
+}
+
+.stat-fill.money {
+    background: #ffd700;
+}
+
+.stat-fill.social {
+    background: #ff69b4;
+}
+
+.stat-fill.energy {
+    background: #88ccff;
+}
+
+.stat-fill.mood {
+    background: #ffaa00;
+}
+
+<span class="comment">/* 地点卡片 */</span>
+.location-card {
+    background: #1a1a2e;
+    border: 2px solid #555;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.1s;
+    box-shadow: 3px 3px 0px #000;
+}
+
+.location-card:hover {
+    border-color: #ff69b4;
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #000;
+}
+
+<span class="comment">/* 弹窗样式 */</span>
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 10px;
+}
+
+.modal-content {
+    background: #2d2d44;
+    border: 4px solid #00ff88;
+    max-width: 450px;
+    width: 100%;
+    box-shadow: 8px 8px 0px #000;
+}</pre>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>💻 大学生活模拟器源代码 | 使用纯HTML/CSS/JavaScript开发</p>
+        </footer>
+    </div>
+
+    <script>
+        // 标签切换
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.dataset.tab;
+                
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                btn.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // 复制代码
+        function copyCode(elementId) {
+            const code = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('代码已复制！');
+            });
+        }
+    </script>
+</body>
+</html>

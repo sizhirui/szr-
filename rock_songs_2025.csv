@@ -1,0 +1,26 @@
+rank,song_title,artist,genre,spotify_streams,billboard_rank,billboard_weeks,release_date,album,country,energy,danceability,valence
+1,Resonance Echoes,Arc Nova,Alternative Rock,856234123,1,32,2025-01-15,Echo Chamber,USA,0.89,0.56,0.72
+2,Neon Midnight,Velvet Riot,Indie Rock,723891456,2,28,2025-02-20,City Lights,UK,0.82,0.64,0.68
+3,Thunder Pulse,Steel Horizon,Heavy Metal,654231789,3,25,2025-01-28,Metal Storm,Germany,0.93,0.32,0.24
+4,Electric Dreams,The Circuit,Electronic Rock,589342167,4,22,2025-03-10,Digital Age,USA,0.88,0.71,0.76
+5,Burning Hearts,Flame Division,Hard Rock,542167890,5,20,2025-02-05,Rising Fire,Australia,0.91,0.45,0.58
+6,Cosmic Drift,Nebula Wave,Space Rock,498765432,6,18,2025-04-01,Cosmos,Canada,0.78,0.52,0.64
+7,Rebel Soul,Blackjack Blues,Blues Rock,456231789,7,16,2025-01-10,Crossroads,USA,0.85,0.61,0.71
+8,Shadow Dance,Dark Eclipse,Gothic Rock,412345678,8,14,2025-03-25,Midnight Shadows,UK,0.72,0.48,0.35
+9,Sonic Boom,Sound Barrier,Progressive Rock,389123456,9,12,2025-02-28,Evolution,Japan,0.86,0.54,0.62
+10,Wildfire,Fire Strike,Punk Rock,356789123,10,10,2025-04-15,Revolution,USA,0.94,0.58,0.78
+11,Dream Warriors,Starlight Brigade,Power Metal,323456789,11,8,2025-03-05,Warriors of Light,Sweden,0.92,0.38,0.82
+12,Echoes of Time,Chronos,Psychedelic Rock,298765432,12,7,2025-01-20,Time Machine,USA,0.76,0.63,0.55
+13,Breaking Chains,Freedom Call,Alternative Metal,276543210,13,6,2025-04-20,Break Free,Germany,0.90,0.42,0.48
+14,Raging Storm,Tempest,Classic Rock,254321678,14,5,2025-02-10,Storm Front,UK,0.84,0.51,0.61
+15,Mystic River,Northern Lights,Folk Rock,234567890,15,4,2025-05-01,Wilderness,Canada,0.71,0.68,0.74
+16,Chrome Hearts,Metal Kings,Thrash Metal,212345678,16,3,2025-05-10,Metal Kingdom,USA,0.95,0.28,0.18
+17,Urban Jungle,Street Cats,Post-Punk,198765432,17,3,2025-03-15,City Streets,UK,0.79,0.56,0.45
+18,Blue Horizon,Ocean Waves,Soft Rock,187654321,18,2,2025-04-25,Calm Waters,Australia,0.65,0.72,0.85
+19,Riot Radio,The Static,Pop Rock,176543210,19,2,2025-05-05,Radioactive,USA,0.81,0.69,0.77
+20,Mountain High,Summit,Stoner Rock,165432109,20,1,2025-05-15,Peak Experience,USA,0.87,0.44,0.52
+21,Dragon's Breath,Dragon Slayers,Symphonic Metal,154321098,21,1,2025-05-18,Dragon Realm,Finland,0.88,0.35,0.68
+22,Neon Highway,Neon Riders,Glam Rock,143210987,22,1,2025-05-20,Highway Dreams,USA,0.83,0.62,0.73
+23,Blood Moon,Vampire Weekend,Death Metal,132109876,23,1,2025-05-22,Darkness Rising,Norway,0.96,0.22,0.12
+24,Sunset Boulevard,Sunset Strip,Surf Rock,121098765,24,1,2025-05-25,California Sun,USA,0.77,0.75,0.82
+25,Rust and Bone,Iron Clad,Industrial Rock,110987654,25,1,2025-05-28,Factory,USA,0.92,0.41,0.28

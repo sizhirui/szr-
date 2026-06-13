@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎸 摇滚数据分析 - 源代码</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        body {
+            font-family: 'Press Start 2P', 'Courier New', monospace;
+            background: #1a1a2e;
+            min-height: 100vh;
+            color: #fff;
+            text-shadow: 2px 2px 0px #000;
+            padding: 20px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(45deg, #0f0f1a 25%, transparent 25%),
+                linear-gradient(-45deg, #0f0f1a 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #0f0f1a 75%),
+                linear-gradient(-45deg, transparent 75%, #0f0f1a 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #2d2d44;
+            border: 4px solid #ff69b4;
+            box-shadow: 6px 6px 0px #000;
+        }
+
+        header h1 {
+            font-size: 0.9rem;
+            color: #ff69b4;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 0.45rem;
+            color: #88ccff;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 10px 18px;
+            background: #2d2d44;
+            border: 3px solid #444;
+            color: #fff;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.45rem;
+            text-decoration: none;
+            transition: all 0.1s;
+            box-shadow: 3px 3px 0px #000;
+        }
+
+        .nav-btn:hover {
+            border-color: #ff69b4;
+            color: #ff69b4;
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px #000;
+        }
+
+        .nav-btn.active {
+            border-color: #ff69b4;
+            color: #ff69b4;
+            background: #ff69b422;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 15px;
+            background: #2d2d44;
+            border: 2px solid #555;
+            color: #fff;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.4rem;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 2px 2px 0px #000;
+        }
+
+        .tab-btn:hover {
+            border-color: #ff69b4;
+            color: #ff69b4;
+        }
+
+        .tab-btn.active {
+            border-color: #ff69b4;
+            color: #ff69b4;
+            background: #ff69b422;
+        }
+
+        .code-section {
+            background: #2d2d44;
+            border: 3px solid #555;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 4px 4px 0px #000;
+        }
+
+        .code-section h2 {
+            color: #ff69b4;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px dashed #555;
+        }
+
+        .code-box {
+            background: #0a0a0a;
+            border: 2px solid #333;
+            padding: 15px;
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .code-box pre {
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+            font-size: 0.4rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .code-box pre .comment {
+            color: #888;
+        }
+
+        .code-box pre .keyword {
+            color: #ff69b4;
+        }
+
+        .code-box pre .string {
+            color: #ffd700;
+        }
+
+        .code-box pre .number {
+            color: #88ccff;
+        }
+
+        .code-box pre .function {
+            color: #ffaa00;
+        }
+
+        .code-box pre .import {
+            color: #88ccff;
+        }
+
+        .copy-btn {
+            float: right;
+            padding: 5px 10px;
+            background: #1a1a2e;
+            border: 2px solid #555;
+            color: #fff;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.35rem;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.1s;
+        }
+
+        .copy-btn:hover {
+            border-color: #ff69b4;
+            color: #ff69b4;
+        }
+
+        .file-info {
+            font-size: 0.4rem;
+            color: #888;
+            margin-bottom: 15px;
+        }
+
+        .file-info span {
+            color: #ff69b4;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 3px dashed #555;
+            margin-top: 30px;
+        }
+
+        footer p {
+            color: #888;
+            font-size: 0.4rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 0.7rem;
+            }
+
+            .code-section {
+                padding: 15px;
+            }
+
+            .nav-btn, .tab-btn {
+                padding: 8px 12px;
+                font-size: 0.4rem;
+            }
+
+            .code-box pre {
+                font-size: 0.35rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💻 摇滚数据分析 - 源代码</h1>
+            <p>Python数据处理与可视化代码展示</p>
+        </header>
+
+        <div class="nav-links">
+            <a href="rock_analysis.html" class="nav-btn" target="_self">🎸 数据分析</a>
+            <a href="rock_report.html" class="nav-btn">📋 说明报告</a>
+            <a href="rock_code.html" class="nav-btn active">💻 源代码</a>
+            <a href="index.html" class="nav-btn">🏠 返回主页</a>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="main">main.py</button>
+            <button class="tab-btn" data-tab="analysis">analysis.py</button>
+            <button class="tab-btn" data-tab="visualization">visualization.py</button>
+        </div>
+
+        <!-- main.py -->
+        <div class="tab-content active" id="main">
+            <div class="code-section">
+                <h2>📄 main.py - 主程序入口</h2>
+                <div class="file-info">文件大小: ~5KB | 代码行数: 89行</div>
+                <button class="copy-btn" onclick="copyCode('main-code')">复制代码</button>
+                <div class="code-box">
+                    <pre id="main-code"><span class="comment"># -*- coding: utf-8 -*-</span>
+<span class="comment"># 摇滚数据分析项目主程序</span>
+
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">import</span> os
+<span class="keyword">from</span> src.data_loader <span class="keyword">import</span> load_data
+<span class="keyword">from</span> src.analysis <span class="keyword">import</span> RockAnalyzer
+<span class="keyword">from</span> src.visualization <span class="keyword">import</span> RockVisualizer
+
+<span class="keyword">def</span> <span class="function">main</span>():
+    <span class="comment"># 设置路径</span>
+    data_path = <span class="string">'data/rock_songs.csv'</span>
+    output_path = <span class="string">'results/'</span>
+    
+    <span class="comment"># 创建输出目录</span>
+    <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(output_path):
+        os.makedirs(output_path)
+    
+    <span class="comment"># 加载数据</span>
+    <span class="keyword">print</span>(<span class="string">"[INFO] 正在加载摇滚音乐数据..."</span>)
+    df = load_data(data_path)
+    <span class="keyword">print</span>(<span class="string">"[INFO] 数据加载完成，共 {} 条记录"</span>.format(len(df)))
+    
+    <span class="comment"># 初始化分析器</span>
+    analyzer = RockAnalyzer(df)
+    
+    <span class="comment"># 执行分析</span>
+    <span class="keyword">print</span>(<span class="string">"[INFO] 开始数据分析..."</span>)
+    
+    <span class="comment"># 1. 流派分布分析</span>
+    genre_dist = analyzer.analyze_genre_distribution()
+    <span class="keyword">print</span>(<span class="string">"[INFO] 流派分布分析完成"</span>)
+    
+    <span class="comment"># 2. 年代趋势分析</span>
+    decade_trend = analyzer.analyze_decade_trend()
+    <span class="keyword">print</span>(<span class="string">"[INFO] 年代趋势分析完成"</span>)
+    
+    <span class="comment"># 3. 音频特征分析</span>
+    audio_features = analyzer.analyze_audio_features()
+    <span class="keyword">print</span>(<span class="string">"[INFO] 音频特征分析完成"</span>)
+    
+    <span class="comment"># 4. 艺术家影响力分析</span>
+    artist_influence = analyzer.analyze_artist_influence()
+    <span class="keyword">print</span>(<span class="string">"[INFO] 艺术家影响力分析完成"</span>)
+    
+    <span class="comment"># 初始化可视化器</span>
+    visualizer = RockVisualizer(df)
+    
+    <span class="comment"># 生成可视化图表</span>
+    <span class="keyword">print</span>(<span class="string">"[INFO] 生成可视化图表..."</span>)
+    
+    visualizer.plot_genre_distribution(output_path)
+    visualizer.plot_decade_trend(output_path)
+    visualizer.plot_audio_features(output_path)
+    visualizer.plot_artist_influence(output_path, top_n=10)
+    
+    <span class="keyword">print</span>(<span class="string">"[INFO] 分析完成！结果已保存至 {}"</span>.format(output_path))
+
+<span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:
+    main()</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- analysis.py -->
+        <div class="tab-content" id="analysis">
+            <div class="code-section">
+                <h2>📄 analysis.py - 数据分析模块</h2>
+                <div class="file-info">文件大小: ~12KB | 代码行数: 156行</div>
+                <button class="copy-btn" onclick="copyCode('analysis-code')">复制代码</button>
+                <div class="code-box">
+                    <pre id="analysis-code"><span class="comment"># -*- coding: utf-8 -*-</span>
+<span class="comment"># 摇滚数据分析模块</span>
+
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="keyword">class</span> <span class="function">RockAnalyzer</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, df):
+        <span class="keyword">self</span>.df = df
+        <span class="keyword">self</span>.validate_data()
+    
+    <span class="keyword">def</span> <span class="function">validate_data</span>(self):
+        <span class="comment">"""验证数据完整性"""</span>
+        required_columns = [<span class="string">'artist'</span>, <span class="string">'track'</span>, <span class="string">'album'</span>, <span class="string">'year'</span>, 
+                           <span class="string">'genre'</span>, <span class="string">'energy'</span>, <span class="string">'danceability'</span>, <span class="string">'tempo'</span>]
+        missing_cols = [col <span class="keyword">for</span> col <span class="keyword">in</span> required_columns <span class="keyword">if</span> col <span class="keyword">not</span> <span class="keyword">in</span> <span class="keyword">self</span>.df.columns]
+        <span class="keyword">if</span> missing_cols:
+            <span class="keyword">raise</span> ValueError(<span class="string">"缺失必要列: {}"</span>.format(missing_cols))
+    
+    <span class="keyword">def</span> <span class="function">analyze_genre_distribution</span>(self):
+        <span class="comment">"""分析摇滚流派分布"""</span>
+        genre_counts = <span class="keyword">self</span>.df[<span class="string">'genre'</span>].value_counts().reset_index()
+        genre_counts.columns = [<span class="string">'genre'</span>, <span class="string">'count'</span>]
+        genre_counts[<span class="string">'percentage'</span>] = (genre_counts[<span class="string">'count'</span>] / len(<span class="keyword">self</span>.df)) * <span class="number">100</span>
+        <span class="keyword">return</span> genre_counts
+    
+    <span class="keyword">def</span> <span class="function">analyze_decade_trend</span>(self):
+        <span class="comment">"""分析年代趋势"""</span>
+        df_copy = <span class="keyword">self</span>.df.copy()
+        df_copy[<span class="string">'decade'</span>] = ((df_copy[<span class="string">'year'</span>] // <span class="number">10</span>) * <span class="number">10</span>).astype(str) + <span class="string">'s'</span>
+        
+        decade_stats = df_copy.groupby(<span class="string">'decade'</span>).agg({
+            <span class="string">'track'</span>: <span class="string">'count'</span>,
+            <span class="string">'energy'</span>: <span class="string">'mean'</span>,
+            <span class="string">'danceability'</span>: <span class="string">'mean'</span>,
+            <span class="string">'tempo'</span>: <span class="string">'mean'</span>,
+            <span class="string">'popularity'</span>: <span class="string">'mean'</span>
+        }).reset_index()
+        
+        <span class="keyword">return</span> decade_stats
+    
+    <span class="keyword">def</span> <span class="function">analyze_audio_features</span>(self):
+        <span class="comment">"""分析音频特征"""</span>
+        features = [<span class="string">'energy'</span>, <span class="string">'danceability'</span>, <span class="string">'tempo'</span>, 
+                    <span class="string">'loudness'</span>, <span class="string">'valence'</span>, <span class="string">'instrumentalness'</span>]
+        
+        feature_stats = <span class="keyword">self</span>.df[features].agg([<span class="string">'mean'</span>, <span class="string">'std'</span>, <span class="string">'min'</span>, <span class="string">'max'</span>])
+        feature_stats = feature_stats.round(<span class="number">2</span>)
+        
+        <span class="keyword">return</span> feature_stats
+    
+    <span class="keyword">def</span> <span class="function">analyze_artist_influence</span>(self, top_n=<span class="number">20</span>):
+        <span class="comment">"""分析艺术家影响力"""</span>
+        artist_stats = <span class="keyword">self</span>.df.groupby(<span class="string">'artist'</span>).agg({
+            <span class="string">'track'</span>: <span class="string">'count'</span>,
+            <span class="string">'popularity'</span>: <span class="string">'mean'</span>,
+            <span class="string">'year'</span>: [<span class="string">'min'</span>, <span class="string">'max'</span>]
+        }).reset_index()
+        
+        <span class="comment"># 计算活跃年限</span>
+        artist_stats[<span class="string">'active_years'</span>] = artist_stats[(<span class="string">'year'</span>, <span class="string">'max'</span>)] - artist_stats[(<span class="string">'year'</span>, <span class="string">'min'</span>)]
+        
+        <span class="comment"># 综合影响力评分</span>
+        artist_stats[<span class="string">'influence_score'</span>] = (
+            artist_stats[(<span class="string">'track'</span>, <span class="string">'count'</span>)] * <span class="number">0.4</span> +
+            artist_stats[(<span class="string">'popularity'</span>, <span class="string">'mean'</span>)] * <span class="number">0.4</span> +
+            artist_stats[<span class="string">'active_years'</span>] * <span class="number">0.2</span>
+        )
+        
+        <span class="keyword">return</span> artist_stats.sort_values(<span class="string">'influence_score'</span>, ascending=<span class="keyword">False</span>).head(top_n)</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- visualization.py -->
+        <div class="tab-content" id="visualization">
+            <div class="code-section">
+                <h2>📄 visualization.py - 数据可视化模块</h2>
+                <div class="file-info">文件大小: ~15KB | 代码行数: 198行</div>
+                <button class="copy-btn" onclick="copyCode('visualization-code')">复制代码</button>
+                <div class="code-box">
+                    <pre id="visualization-code"><span class="comment"># -*- coding: utf-8 -*-</span>
+<span class="comment"># 摇滚数据可视化模块</span>
+
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+<span class="keyword">import</span> seaborn <span class="keyword">as</span> sns
+<span class="keyword">import</span> os
+
+<span class="keyword">class</span> <span class="function">RockVisualizer</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, df):
+        <span class="keyword">self</span>.df = df
+        <span class="keyword">self</span>._setup_style()
+    
+    <span class="keyword">def</span> <span class="function">_setup_style</span>(self):
+        <span class="comment">"""设置可视化风格"""</span>
+        plt.style.use(<span class="string">'dark_background'</span>)
+        sns.set_palette(<span class="string">'rocket'</span>)
+    
+    <span class="keyword">def</span> <span class="function">plot_genre_distribution</span>(self, output_path):
+        <span class="comment">"""绘制流派分布图"""</span>
+        genre_counts = <span class="keyword">self</span>.df[<span class="string">'genre'</span>].value_counts().head(<span class="number">10</span>)
+        
+        fig, ax = plt.subplots(figsize=(<span class="number">12</span>, <span class="number">6</span>))
+        bars = ax.bar(genre_counts.index, genre_counts.values, color=sns.color_palette(<span class="string">'rocket'</span>))
+        
+        ax.set_title(<span class="string">'摇滚流派分布 Top 10'</span>, fontsize=<span class="number">14</span>, pad=<span class="number">20</span>)
+        ax.set_xlabel(<span class="string">'流派'</span>, fontsize=<span class="number">12</span>)
+        ax.set_ylabel(<span class="string">'歌曲数量'</span>, fontsize=<span class="number">12</span>)
+        
+        <span class="keyword">for</span> bar <span class="keyword">in</span> bars:
+            height = bar.get_height()
+            ax.text(bar.get_x() + bar.get_width()/<span class="number">2</span>, height,
+                    f<span class="string">'{height:,}'</span>, ha=<span class="string">'center'</span>, va=<span class="string">'bottom'</span>)
+        
+        plt.xticks(rotation=<span class="number">45</span>, ha=<span class="string">'right'</span>)
+        plt.tight_layout()
+        plt.savefig(os.path.join(output_path, <span class="string">'genre_distribution.png'</span>), dpi=<span class="number">300</span>)
+        plt.close()
+    
+    <span class="keyword">def</span> <span class="function">plot_decade_trend</span>(self, output_path):
+        <span class="comment">"""绘制年代趋势图"""</span>
+        df_copy = <span class="keyword">self</span>.df.copy()
+        df_copy[<span class="string">'decade'</span>] = ((df_copy[<span class="string">'year'</span>] // <span class="number">10</span>) * <span class="number">10</span>).astype(str) + <span class="string">'s'</span>
+        
+        decade_counts = df_copy.groupby(<span class="string">'decade'</span>)[<span class="string">'track'</span>].count()
+        
+        fig, ax = plt.subplots(figsize=(<span class="number">12</span>, <span class="number">6</span>))
+        ax.plot(decade_counts.index, decade_counts.values, marker=<span class="string">'o'</span>, 
+                linewidth=<span class="number">3</span>, color=<span class="string">'#ff69b4'</span>)
+        
+        ax.fill_between(decade_counts.index, decade_counts.values, 
+                        alpha=<span class="number">0.3</span>, color=<span class="string">'#ff69b4'</span>)
+        
+        ax.set_title(<span class="string">'摇滚音乐年代趋势'</span>, fontsize=<span class="number">14</span>, pad=<span class="number">20</span>)
+        ax.set_xlabel(<span class="string">'年代'</span>, fontsize=<span class="number">12</span>)
+        ax.set_ylabel(<span class="string">'歌曲数量'</span>, fontsize=<span class="number">12</span>)
+        
+        plt.tight_layout()
+        plt.savefig(os.path.join(output_path, <span class="string">'decade_trend.png'</span>), dpi=<span class="number">300</span>)
+        plt.close()
+    
+    <span class="keyword">def</span> <span class="function">plot_audio_features</span>(self, output_path):
+        <span class="comment">"""绘制音频特征热力图"""</span>
+        features = [<span class="string">'energy'</span>, <span class="string">'danceability'</span>, <span class="string">'tempo'</span>, 
+                    <span class="string">'loudness'</span>, <span class="string">'valence'</span>, <span class="string">'instrumentalness'</span>]
+        
+        corr_matrix = <span class="keyword">self</span>.df[features].corr()
+        
+        fig, ax = plt.subplots(figsize=(<span class="number">10</span>, <span class="number">8</span>))
+        sns.heatmap(corr_matrix, annot=<span class="keyword">True</span>, cmap=<span class="string">'rocket'</span>, 
+                    center=<span class="number">0</span>, square=<span class="keyword">True</span>, ax=ax)
+        
+        ax.set_title(<span class="string">'音频特征相关性热力图'</span>, fontsize=<span class="number">14</span>, pad=<span class="number">20</span>)
+        
+        plt.tight_layout()
+        plt.savefig(os.path.join(output_path, <span class="string">'audio_features.png'</span>), dpi=<span class="number">300</span>)
+        plt.close()</pre>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>💻 摇滚数据分析项目源代码 | 使用 Python + Pandas + Matplotlib</p>
+        </footer>
+    </div>
+
+    <script>
+        // 标签切换
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.dataset.tab;
+                
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                btn.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // 复制代码
+        function copyCode(elementId) {
+            const code = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('代码已复制！');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python学习记录</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        body {
+            font-family: 'Press Start 2P', 'Courier New', monospace;
+            background: #1a1a2e;
+            min-height: 100vh;
+            color: #fff;
+            text-shadow: 2px 2px 0px #000;
+        }
+
+        /* 马赛克背景 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(45deg, #0f0f1a 25%, transparent 25%),
+                linear-gradient(-45deg, #0f0f1a 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #0f0f1a 75%),
+                linear-gradient(-45deg, transparent 75%, #0f0f1a 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 15px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 0.9rem;
+            color: #00ff88;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #88ccff;
+            font-size: 0.5rem;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            background: #2d2d44;
+            border: 3px solid;
+            color: #fff;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.5rem;
+            cursor: pointer;
+            transition: all 0.1s;
+            text-transform: uppercase;
+            box-shadow: 3px 3px 0px #000;
+        }
+
+        .tab-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px #000;
+        }
+
+        .tab-btn.active {
+            border-color: #00ff88;
+            color: #00ff88;
+            background: #00ff8822;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 搜索框 */
+        .search-container {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 40px 12px 16px;
+            background: #2d2d44;
+            border: 3px solid #444;
+            color: #fff;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.45rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+            box-shadow: 3px 3px 0px #000;
+        }
+
+        .search-input:focus {
+            border-color: #88ccff;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #88ccff;
+            font-size: 0.8rem;
+        }
+
+        /* 学习过程卡片 */
+        .study-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .study-card {
+            background: #2d2d44;
+            border: 3px solid #555;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 4px 4px 0px #000;
+        }
+
+        .study-card:hover {
+            border-color: #00ff88;
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000;
+        }
+
+        .study-card h3 {
+            color: #00ff88;
+            margin-bottom: 10px;
+            font-size: 0.55rem;
+            text-transform: uppercase;
+        }
+
+        .study-card p {
+            color: #aaa;
+            font-size: 0.4rem;
+            line-height: 1.6;
+        }
+
+        .study-card .tag {
+            display: inline-block;
+            padding: 5px 10px;
+            background: #1a1a2e;
+            border: 2px solid #88ccff;
+            color: #88ccff;
+            font-size: 0.35rem;
+            margin-top: 10px;
+        }
+
+        /* 目录 */
+        .table-of-contents {
+            background: #2d2d44;
+            border: 3px solid #88ccff;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 4px 4px 0px #000;
+        }
+
+        .table-of-contents h3 {
+            color: #88ccff;
+            margin-bottom: 15px;
+            font-size: 0.55rem;
+            text-transform: uppercase;
+        }
+
+        .table-of-contents ul {
+            list-style: none;
+            columns: 2;
+            gap: 10px;
+        }
+
+        .table-of-contents li {
+            margin-bottom: 8px;
+        }
+
+        .table-of-contents a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.4rem;
+            transition: color 0.3s ease;
+        }
+
+        .table-of-contents a:hover {
+            color: #00ff88;
+        }
+
+        /* 易错题 */
+        .quiz-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 15px;
+        }
+
+        .quiz-card {
+            background: #2d2d44;
+            border: 3px solid #555;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 4px 4px 0px #000;
+        }
+
+        .quiz-card:hover {
+            border-color: #ff4466;
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000;
+        }
+
+        .quiz-card h3 {
+            color: #ff4466;
+            margin-bottom: 10px;
+            font-size: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .quiz-card p {
+            color: #aaa;
+            font-size: 0.4rem;
+            line-height: 1.5;
+        }
+
+        /* 模态框 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 10px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #2d2d44;
+            border: 4px solid #ff4466;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 8px 8px 0px #000;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #ff4466;
+            color: #1a1a2e;
+        }
+
+        .modal-header h2 {
+            font-size: 0.55rem;
+            text-transform: uppercase;
+        }
+
+        .close-btn {
+            background: #1a1a2e;
+            border: none;
+            color: #ff4466;
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            font-family: 'Press Start 2P', monospace;
+        }
+
+        .modal-content {
+            padding: 20px;
+        }
+
+        .modal-content h4 {
+            color: #fff;
+            margin-bottom: 10px;
+            font-size: 0.5rem;
+        }
+
+        .modal-content p {
+            color: #aaa;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 0.4rem;
+        }
+
+        .answer-btn {
+            padding: 12px 20px;
+            background: #444466;
+            border: 3px solid #00ff88;
+            color: #00ff88;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.45rem;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 3px 3px 0px #000;
+            margin-top: 10px;
+        }
+
+        .answer-btn:hover {
+            background: #00ff88;
+            color: #1a1a2e;
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px #000;
+        }
+
+        .answer-box {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: #1a1a2e;
+            border: 2px solid #00ff88;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .answer-box.active {
+            display: block;
+        }
+
+        .answer-box pre {
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-size: 0.4rem;
+            line-height: 1.6;
+        }
+
+        /* 所学所思 */
+        .reflection-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 15px;
+        }
+
+        .reflection-card {
+            background: #2d2d44;
+            border: 3px solid #ffaa00;
+            padding: 20px;
+            box-shadow: 4px 4px 0px #000;
+        }
+
+        .reflection-card h3 {
+            color: #ffaa00;
+            margin-bottom: 12px;
+            font-size: 0.55rem;
+            text-transform: uppercase;
+        }
+
+        .reflection-card p {
+            color: #aaa;
+            line-height: 1.6;
+            font-size: 0.4rem;
+        }
+
+        /* 像素化滚动条 */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a2e;
+            border: 2px solid #444;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #444;
+            border: 2px solid #888;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 0.7rem;
+            }
+
+            .table-of-contents ul {
+                columns: 1;
+            }
+
+            .tab-btn {
+                padding: 10px 15px;
+                font-size: 0.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Python学习记录</h1>
+            <p>记录成长，积累经验</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="study">学习过程</button>
+            <button class="tab-btn" data-tab="quiz">易错题</button>
+            <button class="tab-btn" data-tab="reflection">所学所思</button>
+        </div>
+
+        <!-- 学习过程 -->
+        <div class="tab-content active" id="study">
+            <div class="search-container">
+                <input type="text" class="search-input" id="studySearch" placeholder="搜索知识点...">
+                <span class="search-icon">🔍</span>
+            </div>
+
+            <div class="table-of-contents">
+                <h3>📚 学习目录</h3>
+                <ul>
+                    <li><a href="#basic">基础语法</a></li>
+                    <li><a href="#control">流程控制</a></li>
+                    <li><a href="#function">函数</a></li>
+                    <li><a href="#data">数据结构</a></li>
+                    <li><a href="#module">模块与包</a></li>
+                    <li><a href="#oop">面向对象</a></li>
+                </ul>
+            </div>
+
+            <div class="study-cards" id="studyCards">
+                <div class="study-card" id="basic">
+                    <h3>📝 基础语法</h3>
+                    <p>学习变量、数据类型、运算符、字符串处理等基础知识</p>
+                    <span class="tag">入门</span>
+                </div>
+                <div class="study-card" id="control">
+                    <h3>🔄 流程控制</h3>
+                    <p>掌握if-else条件判断、for和while循环、break和continue语句</p>
+                    <span class="tag">核心</span>
+                </div>
+                <div class="study-card" id="function">
+                    <h3>⚙️ 函数</h3>
+                    <p>学习函数定义、参数传递、返回值、lambda表达式</p>
+                    <span class="tag">核心</span>
+                </div>
+                <div class="study-card" id="data">
+                    <h3>📊 数据结构</h3>
+                    <p>掌握列表、元组、字典、集合的使用方法和操作</p>
+                    <span class="tag">重点</span>
+                </div>
+                <div class="study-card" id="module">
+                    <h3>📦 模块与包</h3>
+                    <p>学习import导入模块、使用标准库、自定义模块</p>
+                    <span class="tag">进阶</span>
+                </div>
+                <div class="study-card" id="oop">
+                    <h3>🏗️ 面向对象</h3>
+                    <p>理解类和对象、继承、封装、多态等概念</p>
+                    <span class="tag">进阶</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 易错题 -->
+        <div class="tab-content" id="quiz">
+            <div class="quiz-section" id="quizSection">
+                <div class="quiz-card" data-quiz="1">
+                    <h3>❌ 题目1: 累加求和直到s≥m</h3>
+                    <p>计算累加和，当和超过输入值时停止...</p>
+                </div>
+                <div class="quiz-card" data-quiz="2">
+                    <h3>❌ 题目2: 求大于输入数的最小斐波那契数</h3>
+                    <p>斐波那契数列，找出第一个大于n的数...</p>
+                </div>
+                <div class="quiz-card" data-quiz="3">
+                    <h3>❌ 题目3: 计算分段函数g(x)</h3>
+                    <p>根据x值计算分段函数的结果...</p>
+                </div>
+                <div class="quiz-card" data-quiz="4">
+                    <h3>❌ 题目4: 产生m个4位数的验证码</h3>
+                    <p>使用随机数生成验证码，循环m次...</p>
+                </div>
+                <div class="quiz-card" data-quiz="5">
+                    <h3>❌ 题目5: 分段函数1</h3>
+                    <p>根据绝对值判断计算不同表达式...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 所学所思 -->
+        <div class="tab-content" id="reflection">
+            <div class="reflection-section">
+                <div class="reflection-card">
+                    <h3>💡 循环的艺术</h3>
+                    <p>通过做题发现，循环条件的设置非常关键。特别是while循环，要仔细考虑什么时候停止。累加求和那道题，一开始把条件写成了`s <= m`，结果总是多算一项。后来明白了，应该是`s < m`时继续循环。</p>
+                </div>
+                <div class="reflection-card">
+                    <h3>💡 数据类型的坑</h3>
+                    <p>浮点数比较要小心！一开始用`x == 0`来判断，虽然题目里没问题，但实际项目中应该用`abs(x) < 1e-9`这种方式比较。不过这道题明确说了输入实数，所以直接判断也可以。</p>
+                </div>
+                <div class="reflection-card">
+                    <h3>💡 函数的封装</h3>
+                    <p>分段函数的题目让我意识到，把逻辑封装成函数会更清晰。虽然题目只需要直接计算，但养成写函数的习惯很重要。参数校验、异常处理都是需要考虑的点。</p>
+                </div>
+                <div class="reflection-card">
+                    <h3>💡 随机数的种子</h3>
+                    <p>验证码那道题很有意思，每次用生成的验证码作为新种子。这让我理解了伪随机数的概念——种子相同，生成的序列就相同。在需要可重现的随机场景中很有用。</p>
+                </div>
+                <div class="reflection-card">
+                    <h3>💡 数学库的使用</h3>
+                    <p>math模块提供了很多实用函数，比如log10、sqrt等。要注意区分自然对数和常用对数，一开始差点用错函数。多看官方文档很重要！</p>
+                </div>
+                <div class="reflection-card">
+                    <h3>💡 代码规范</h3>
+                    <p>写代码时要注意变量命名规范，用有意义的变量名。比如斐波那契那道题，用a, b比用x, y更直观。适当的注释也很重要，但不要过度注释。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框 -->
+    <div class="modal-overlay" id="quizModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="close-btn" id="closeModal">×</button>
+            </div>
+            <div class="modal-content">
+                <div id="quizContent"></div>
+                <button class="answer-btn" id="showAnswer">显示答案</button>
+                <div class="answer-box" id="answerBox">
+                    <pre id="answerCode"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 题目数据
+        const quizzes = {
+            1: {
+                title: '题目1: 累加求和直到s≥m',
+                description: `题目描述：计算 s=1+2+3+…+n，当 s 刚超过输入的 m 时停止运算，按格式输出结果。
+
+输入格式：一行输入一个整数 m
+输出格式：形如 s=1+2+...+n`,
+                answer: `m = int(input())
+s = 0
+n = 0
+while s < m:
+    n += 1
+    s += n
+print(f"{s}=1+2+...+{n}")`
+            },
+            2: {
+                title: '题目2: 求大于输入数的最小斐波那契数',
+                description: `题目描述：斐波那契数列：1,1,2,3,5,8,13…，从第3项开始每项等于前两项之和。输入 n(n≥10)，输出大于 n 的最小斐波那契数。
+
+输入格式：一行输入一个正整数 n
+输出格式：一行输出目标斐波那契数`,
+                answer: `n = int(input())
+a, b = 1, 1
+while b <= n:
+    a, b = b, a + b
+print(b)`
+            },
+            3: {
+                title: '题目3: 计算分段函数g(x)',
+                description: `题目描述：分段函数：
+g(x) = 0 (x=0)
+g(x) = 1/(2x) (x≠0)
+
+输入实数 x，按格式输出，x 和结果均保留3位小数。
+
+输入格式：一行输入实数 x
+输出格式：形如 g(x)=result，数值保留3位小数`,
+                answer: `x = float(input())
+if x == 0:
+    res = 0.0
+else:
+    res = 1 / (2 * x)
+print(f"g({x:.3f})={res:.3f}")`
+            },
+            4: {
+                title: '题目4: 产生m个4位数的验证码',
+                description: `题目描述：同一行输入 m 和种子 n，用种子生成[1000,9999]的4位随机验证码，生成的验证码作为下一次的种子，循环生成 m 个，分行输出。
+
+输入格式：同一行输入两个整数 m,n，空格分隔
+输出格式：m 行，每行一个4位验证码`,
+                answer: `import random
+
+m, seed = map(int, input().split())
+random.seed(seed)
+for _ in range(m):
+    code = random.randint(1000, 9999)
+    print(code)
+    random.seed(code)`
+            },
+            5: {
+                title: '题目5: 分段函数1',
+                description: `题目描述：分段函数：
+f(x) = -1 (|x|≥300)
+f(x) = x³ / lg(|x|+2.6) (|x|<300)
+
+输入实数 x，按格式输出，x 和结果保留3位小数。
+
+输入格式：一行输入一个实数 x
+输出格式：形如 f(x)=result，数值保留3位小数`,
+                answer: `import math
+
+x = float(input())
+abs_x = abs(x)
+if abs_x >= 300:
+    res = -1.0
+else:
+    denominator = math.log10(abs_x + 2.6)
+    res = (x ** 3) / denominator
+print(f"f({x:.3f})={res:.3f}")`
+            }
+        };
+
+        // 标签切换
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.dataset.tab;
+                
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                btn.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // 搜索功能
+        const searchInput = document.getElementById('studySearch');
+        const studyCards = document.querySelectorAll('.study-card');
+
+        searchInput.addEventListener('input', (e) => {
+            const searchText = e.target.value.toLowerCase();
+            
+            studyCards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(searchText) ? 'block' : 'none';
+            });
+        });
+
+        // 题目点击事件
+        const quizCards = document.querySelectorAll('.quiz-card');
+        const modal = document.getElementById('quizModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const quizContent = document.getElementById('quizContent');
+        const showAnswerBtn = document.getElementById('showAnswer');
+        const answerBox = document.getElementById('answerBox');
+        const answerCode = document.getElementById('answerCode');
+        const closeModalBtn = document.getElementById('closeModal');
+
+        quizCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const quizId = card.dataset.quiz;
+                const quiz = quizzes[quizId];
+                
+                modalTitle.textContent = quiz.title;
+                quizContent.innerHTML = `<p>${quiz.description}</p>`;
+                answerCode.textContent = quiz.answer;
+                answerBox.classList.remove('active');
+                
+                modal.classList.add('active');
+            });
+        });
+
+        // 显示答案
+        showAnswerBtn.addEventListener('click', () => {
+            answerBox.classList.toggle('active');
+            showAnswerBtn.textContent = answerBox.classList.contains('active') ? '隐藏答案' : '显示答案';
+        });
+
+        // 关闭模态框
+        closeModalBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+            answerBox.classList.remove('active');
+            showAnswerBtn.textContent = '显示答案';
+        });
+
+        // 点击模态框外部关闭
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+                answerBox.classList.remove('active');
+                showAnswerBtn.textContent = '显示答案';
+            }
+        });
+    </script>
+</body>
+</html>

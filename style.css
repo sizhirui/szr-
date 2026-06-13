@@ -1,0 +1,673 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+body {
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    background: #1a1a2e;
+    min-height: 100vh;
+    color: #fff;
+    text-shadow: 2px 2px 0px #000;
+}
+
+/* 马赛克背景 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(45deg, #0f0f1a 25%, transparent 25%),
+        linear-gradient(-45deg, #0f0f1a 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #0f0f1a 75%),
+        linear-gradient(-45deg, transparent 75%, #0f0f1a 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* 屏幕容器 */
+.screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.screen.hidden {
+    display: none;
+}
+
+/* 开始界面 */
+.start-content {
+    text-align: center;
+    background: #2d2d44;
+    border: 4px solid #00ff88;
+    padding: 40px;
+    box-shadow: 
+        4px 4px 0px #00ff88,
+        inset 0 0 0 2px #00ff88;
+}
+
+.start-content h1 {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: #00ff88;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    line-height: 1.5;
+}
+
+.start-content p {
+    color: #88ccff;
+    font-size: 0.6rem;
+    margin-bottom: 30px;
+    line-height: 1.8;
+}
+
+/* 按钮样式 */
+.btn {
+    padding: 15px 25px;
+    border: 3px solid;
+    background: #444466;
+    color: #fff;
+    font-family: 'PressStart2P', monospace;
+    font-size: 0.6rem;
+    cursor: pointer;
+    transition: all 0.1s;
+    display: block;
+    margin: 15px auto;
+    min-width: 200px;
+    text-transform: uppercase;
+    box-shadow: 3px 3px 0px #000;
+}
+
+.btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #000;
+}
+
+.btn-primary {
+    border-color: #00ff88;
+    color: #00ff88;
+}
+
+.btn-primary:hover {
+    background: #00ff88;
+    color: #1a1a2e;
+}
+
+.btn-secondary {
+    border-color: #88ccff;
+    color: #88ccff;
+}
+
+.btn-secondary:hover {
+    background: #88ccff;
+    color: #1a1a2e;
+}
+
+.btn-save, .btn-menu {
+    padding: 8px 12px;
+    font-size: 0.5rem;
+    min-width: auto;
+    display: inline-block;
+    margin: 0 5px;
+}
+
+.btn-danger {
+    border-color: #ff4466;
+    color: #ff4466;
+}
+
+.btn-danger:hover {
+    background: #ff4466;
+    color: #1a1a2e;
+}
+
+/* 游戏头部 */
+.game-header {
+    background: #2d2d44;
+    border: 3px solid #ffaa00;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 4px 4px 0px #000;
+}
+
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.date-display {
+    display: flex;
+    gap: 15px;
+}
+
+.day-label, .time-label {
+    font-weight: bold;
+    font-size: 0.6rem;
+    color: #ffaa00;
+    background: #1a1a2e;
+    padding: 5px 10px;
+    border: 2px solid #ffaa00;
+}
+
+.time-label {
+    background: #ffaa00;
+    color: #1a1a2e;
+}
+
+/* 属性条容器 */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.stat-item {
+    background: #1a1a2e;
+    border: 2px solid #444;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.stat-icon {
+    font-size: 1.2rem;
+}
+
+.stat-info {
+    text-align: center;
+    width: 100%;
+}
+
+.stat-name {
+    font-size: 0.45rem;
+    color: #aaa;
+    display: block;
+    text-transform: uppercase;
+}
+
+.stat-bar {
+    height: 8px;
+    background: #333;
+    border: 1px solid #555;
+    overflow: hidden;
+    margin: 4px 0;
+}
+
+.stat-fill {
+    height: 100%;
+    background: #00ff88;
+    transition: width 0.2s;
+}
+
+.stat-fill.money {
+    background: #ffd700;
+}
+
+.stat-fill.social {
+    background: #ff69b4;
+}
+
+.stat-fill.energy {
+    background: #88ccff;
+}
+
+.stat-fill.mood {
+    background: #ffaa00;
+}
+
+.stat-value {
+    font-size: 0.5rem;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* 游戏主内容 */
+.game-main {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+@media (min-width: 1024px) {
+    .game-main {
+        grid-template-columns: 2fr 1fr;
+    }
+}
+
+/* 地图区域 */
+.map-section {
+    background: #2d2d44;
+    border: 3px solid #ff69b4;
+    padding: 20px;
+    box-shadow: 4px 4px 0px #000;
+}
+
+.map-section h2 {
+    margin-bottom: 15px;
+    color: #ff69b4;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.locations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+}
+
+.location-card {
+    background: #1a1a2e;
+    border: 2px solid #555;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.1s;
+    box-shadow: 3px 3px 0px #000;
+}
+
+.location-card:hover {
+    border-color: #ff69b4;
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #000;
+}
+
+.location-card.selected {
+    border-color: #00ff88;
+    background: #00ff8822;
+}
+
+.location-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.location-card h3 {
+    font-size: 0.55rem;
+    margin-bottom: 6px;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.location-card p {
+    font-size: 0.4rem;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.location-effects {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: center;
+}
+
+.effect {
+    font-size: 0.35rem;
+    padding: 3px 6px;
+    background: #333;
+    border: 1px solid;
+}
+
+.effect.study {
+    color: #00ff88;
+    border-color: #00ff88;
+}
+
+.effect.money {
+    color: #ffd700;
+    border-color: #ffd700;
+}
+
+.effect.social {
+    color: #ff69b4;
+    border-color: #ff69b4;
+}
+
+.effect.energy {
+    color: #88ccff;
+    border-color: #88ccff;
+}
+
+.effect.mood {
+    color: #ffaa00;
+    border-color: #ffaa00;
+}
+
+/* 事件区域 */
+.event-section {
+    background: #2d2d44;
+    border: 3px solid #88ccff;
+    padding: 20px;
+    box-shadow: 4px 4px 0px #000;
+}
+
+.event-section h2 {
+    margin-bottom: 12px;
+    color: #88ccff;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.event-log {
+    background: #1a1a2e;
+    border: 2px solid #444;
+    padding: 12px;
+    min-height: 120px;
+    font-size: 0.45rem;
+    line-height: 1.6;
+    color: #aaa;
+}
+
+.event-log p {
+    margin: 5px 0;
+}
+
+/* NPC区域 */
+.npc-section {
+    background: #2d2d44;
+    border: 3px solid #ffaa00;
+    padding: 20px;
+    box-shadow: 4px 4px 0px #000;
+}
+
+.npc-section h2 {
+    margin-bottom: 12px;
+    color: #ffaa00;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.npc-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.npc-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: #1a1a2e;
+    border: 2px solid #555;
+    transition: all 0.1s;
+}
+
+.npc-card:hover {
+    border-color: #ffaa00;
+}
+
+.npc-avatar {
+    font-size: 1.8rem;
+}
+
+.npc-info {
+    flex: 1;
+}
+
+.npc-name {
+    font-weight: bold;
+    color: #fff;
+    font-size: 0.5rem;
+    display: block;
+}
+
+.npc-relation {
+    font-size: 0.4rem;
+    color: #ff69b4;
+}
+
+.npc-favor-bar {
+    width: 100%;
+    height: 6px;
+    background: #333;
+    border: 1px solid #555;
+    margin-top: 4px;
+    overflow: hidden;
+}
+
+.npc-favor-fill {
+    height: 100%;
+    background: #ff69b4;
+    transition: width 0.2s;
+}
+
+/* 弹窗样式 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 10px;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: #2d2d44;
+    border: 4px solid #00ff88;
+    max-width: 450px;
+    width: 100%;
+    box-shadow: 8px 8px 0px #000;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #00ff88;
+    color: #1a1a2e;
+}
+
+.modal-header h3 {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+}
+
+.modal-close {
+    background: #1a1a2e;
+    border: none;
+    color: #00ff88;
+    font-size: 1.2rem;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    font-family: 'PressStart2P', monospace;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-body p {
+    line-height: 1.6;
+    margin-bottom: 15px;
+    color: #ddd;
+    font-size: 0.5rem;
+}
+
+.event-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.choice-btn {
+    padding: 12px 15px;
+    border: 2px solid #88ccff;
+    background: #1a1a2e;
+    color: #88ccff;
+    font-family: 'PressStart2P', monospace;
+    font-size: 0.5rem;
+    cursor: pointer;
+    transition: all 0.1s;
+    text-align: left;
+    box-shadow: 3px 3px 0px #000;
+}
+
+.choice-btn:hover {
+    background: #88ccff;
+    color: #1a1a2e;
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #000;
+}
+
+/* 结局界面 */
+.ending-content {
+    text-align: center;
+    background: #2d2d44;
+    border: 4px solid #ffd700;
+    padding: 40px 25px;
+    box-shadow: 8px 8px 0px #000;
+    max-width: 550px;
+    width: 100%;
+}
+
+.ending-content h1 {
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    color: #ffd700;
+    text-transform: uppercase;
+    line-height: 1.5;
+}
+
+.ending-image {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.ending-content p {
+    line-height: 1.6;
+    color: #aaa;
+    font-size: 0.5rem;
+    margin-bottom: 25px;
+}
+
+.ending-stats {
+    background: #1a1a2e;
+    border: 2px solid #555;
+    padding: 15px;
+    margin-bottom: 25px;
+}
+
+.ending-stats h3 {
+    margin-bottom: 12px;
+    color: #ffaa00;
+    font-size: 0.55rem;
+}
+
+.ending-stats p {
+    margin: 6px 0;
+    color: #88ccff;
+    font-size: 0.45rem;
+}
+
+/* 像素化滚动条 */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1a1a2e;
+    border: 2px solid #444;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #444;
+    border: 2px solid #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .start-content {
+        padding: 30px 20px;
+    }
+
+    .start-content h1 {
+        font-size: 0.8rem;
+    }
+
+    .btn {
+        min-width: 150px;
+        padding: 12px 20px;
+    }
+
+    .status-bar {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .date-display {
+        gap: 8px;
+    }
+
+    .stats-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .stat-item {
+        padding: 6px;
+    }
+
+    .locations-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .modal-content {
+        margin: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .locations-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .location-card {
+        padding: 10px;
+    }
+}

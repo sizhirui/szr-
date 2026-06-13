@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧮 求和库 - 源代码</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        body {
+            font-family: 'Press Start 2P', 'Courier New', monospace;
+            background: #1a1a2e;
+            min-height: 100vh;
+            color: #fff;
+            text-shadow: 2px 2px 0px #000;
+            padding: 20px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(45deg, #0f0f1a 25%, transparent 25%),
+                linear-gradient(-45deg, #0f0f1a 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #0f0f1a 75%),
+                linear-gradient(-45deg, transparent 75%, #0f0f1a 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #2d2d44;
+            border: 4px solid #ffd700;
+            box-shadow: 6px 6px 0px #000;
+        }
+
+        header h1 {
+            font-size: 0.9rem;
+            color: #ffd700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 0.45rem;
+            color: #88ccff;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 10px 18px;
+            background: #2d2d44;
+            border: 3px solid #444;
+            color: #fff;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.45rem;
+            text-decoration: none;
+            transition: all 0.1s;
+            box-shadow: 3px 3px 0px #000;
+        }
+
+        .nav-btn:hover {
+            border-color: #ffd700;
+            color: #ffd700;
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px #000;
+        }
+
+        .nav-btn.active {
+            border-color: #ffd700;
+            color: #ffd700;
+            background: #ffd70022;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 15px;
+            background: #2d2d44;
+            border: 2px solid #555;
+            color: #fff;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.4rem;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 2px 2px 0px #000;
+        }
+
+        .tab-btn:hover {
+            border-color: #ffd700;
+            color: #ffd700;
+        }
+
+        .tab-btn.active {
+            border-color: #ffd700;
+            color: #ffd700;
+            background: #ffd70022;
+        }
+
+        .code-section {
+            background: #2d2d44;
+            border: 3px solid #555;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 4px 4px 0px #000;
+        }
+
+        .code-section h2 {
+            color: #ffd700;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px dashed #555;
+        }
+
+        .code-box {
+            background: #0a0a0a;
+            border: 2px solid #333;
+            padding: 15px;
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .code-box pre {
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+            font-size: 0.4rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .code-box pre .comment {
+            color: #888;
+        }
+
+        .code-box pre .keyword {
+            color: #ff69b4;
+        }
+
+        .code-box pre .string {
+            color: #ffd700;
+        }
+
+        .code-box pre .number {
+            color: #88ccff;
+        }
+
+        .code-box pre .function {
+            color: #ffaa00;
+        }
+
+        .code-box pre .import {
+            color: #88ccff;
+        }
+
+        .copy-btn {
+            float: right;
+            padding: 5px 10px;
+            background: #1a1a2e;
+            border: 2px solid #555;
+            color: #fff;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.35rem;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.1s;
+        }
+
+        .copy-btn:hover {
+            border-color: #ffd700;
+            color: #ffd700;
+        }
+
+        .file-info {
+            font-size: 0.4rem;
+            color: #888;
+            margin-bottom: 15px;
+        }
+
+        .file-info span {
+            color: #ffd700;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 3px dashed #555;
+            margin-top: 30px;
+        }
+
+        footer p {
+            color: #888;
+            font-size: 0.4rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 0.7rem;
+            }
+
+            .code-section {
+                padding: 15px;
+            }
+
+            .nav-btn, .tab-btn {
+                padding: 8px 12px;
+                font-size: 0.4rem;
+            }
+
+            .code-box pre {
+                font-size: 0.35rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💻 求和库 - 源代码</h1>
+            <p>高效数值求和算法实现</p>
+        </header>
+
+        <div class="nav-links">
+            <a href="summation.html" class="nav-btn" target="_self">🧮 在线计算器</a>
+            <a href="summation_report.html" class="nav-btn">📋 说明报告</a>
+            <a href="summation_code.html" class="nav-btn active">💻 源代码</a>
+            <a href="index.html" class="nav-btn">🏠 返回主页</a>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="basic">basic.py</button>
+            <button class="tab-btn" data-tab="kahan">kahan.py</button>
+            <button class="tab-btn" data-tab="parallel">parallel.py</button>
+        </div>
+
+        <!-- basic.py -->
+        <div class="tab-content active" id="basic">
+            <div class="code-section">
+                <h2>📄 basic.py - 基础求和算法</h2>
+                <div class="file-info">文件大小: ~2KB | 代码行数: 67行</div>
+                <button class="copy-btn" onclick="copyCode('basic-code')">复制代码</button>
+                <div class="code-box">
+                    <pre id="basic-code"><span class="comment"># -*- coding: utf-8 -*-</span>
+<span class="comment"># 基础求和算法模块</span>
+
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="keyword">def</span> <span class="function">sum_basic</span>(iterable):
+    <span class="comment">"""
+    普通求和算法
+    
+    参数:
+        iterable: 可迭代对象，包含数字
+    
+    返回:
+        求和结果
+    """</span>
+    result = <span class="number">0</span>
+    <span class="keyword">for</span> num <span class="keyword">in</span> iterable:
+        result += num
+    <span class="keyword">return</span> result
+
+<span class="keyword">def</span> <span class="function">sum_numpy</span>(array):
+    <span class="comment">"""
+    使用NumPy进行向量化求和
+    
+    参数:
+        array: NumPy数组或可转换为数组的序列
+    
+    返回:
+        求和结果
+    """</span>
+    <span class="keyword">return</span> np.sum(np.asarray(array))
+
+<span class="keyword">def</span> <span class="function">sum_with_stats</span>(iterable):
+    <span class="comment">"""
+    求和并返回统计信息
+    
+    参数:
+        iterable: 可迭代对象，包含数字
+    
+    返回:
+        字典，包含sum, count, mean, variance, std
+    """</span>
+    total = <span class="number">0</span>
+    count = <span class="number">0</span>
+    sum_sq = <span class="number">0</span>
+    
+    <span class="keyword">for</span> num <span class="keyword">in</span> iterable:
+        total += num
+        sum_sq += num ** <span class="number">2</span>
+        count += <span class="number">1</span>
+    
+    <span class="keyword">if</span> count == <span class="number">0</span>:
+        <span class="keyword">return</span> {<span class="string">'sum'</span>: <span class="number">0</span>, <span class="string">'count'</span>: <span class="number">0</span>, 
+                <span class="string">'mean'</span>: <span class="number">0</span>, <span class="string">'variance'</span>: <span class="number">0</span>, <span class="string">'std'</span>: <span class="number">0</span>}
+    
+    mean = total / count
+    variance = sum_sq / count - mean ** <span class="number">2</span>
+    std = variance ** <span class="number">0.5</span>
+    
+    <span class="keyword">return</span> {
+        <span class="string">'sum'</span>: total,
+        <span class="string">'count'</span>: count,
+        <span class="string">'mean'</span>: mean,
+        <span class="string">'variance'</span>: variance,
+        <span class="string">'std'</span>: std
+    }
+
+<span class="keyword">def</span> <span class="function">sum_range</span>(start, end, step=<span class="number">1</span>):
+    <span class="comment">"""
+    计算等差数列的和
+    
+    参数:
+        start: 起始值
+        end: 结束值(不包含)
+        step: 步长，默认为1
+    
+    返回:
+        等差数列求和结果
+    """</span>
+    <span class="keyword">if</span> start >= end:
+        <span class="keyword">return</span> <span class="number">0</span>
+    
+    count = ((end - start - <span class="number">1</span>) // step) + <span class="number">1</span>
+    <span class="keyword">return</span> count * (start + (start + (count - <span class="number">1</span>) * step)) // <span class="number">2</span></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- kahan.py -->
+        <div class="tab-content" id="kahan">
+            <div class="code-section">
+                <h2>📄 kahan.py - 高精度求和算法</h2>
+                <div class="file-info">文件大小: ~3KB | 代码行数: 89行</div>
+                <button class="copy-btn" onclick="copyCode('kahan-code')">复制代码</button>
+                <div class="code-box">
+                    <pre id="kahan-code"><span class="comment"># -*- coding: utf-8 -*-</span>
+<span class="comment"># 高精度求和算法模块</span>
+
+<span class="keyword">def</span> <span class="function">sum_kahan</span>(iterable):
+    <span class="comment">"""
+    Kahan求和算法 - 减少浮点精度损失
+    
+    算法原理:
+        通过维护一个补偿变量来存储舍入误差，
+        在累加过程中进行误差修正，提高精度。
+    
+    参数:
+        iterable: 可迭代对象，包含浮点数
+    
+    返回:
+        高精度求和结果
+    """</span>
+    sum_total = <span class="number">0.0</span>
+    compensation = <span class="number">0.0</span>
+    
+    <span class="keyword">for</span> num <span class="keyword">in</span> iterable:
+        <span class="comment"># 减去之前的补偿值</span>
+        y = num - compensation
+        <span class="comment"># 累加，可能产生舍入误差</span>
+        t = sum_total + y
+        <span class="comment"># 计算新的补偿值</span>
+        compensation = (t - sum_total) - y
+        <span class="comment"># 更新总和</span>
+        sum_total = t
+    
+    <span class="keyword">return</span> sum_total
+
+<span class="keyword">def</span> <span class="function">sum_neumaier</span>(iterable):
+    <span class="comment">"""
+    Neumaier求和算法 - 比Kahan更精确
+    
+    算法原理:
+        在Kahan算法基础上改进，当新项的绝对值大于当前和时，
+        使用不同的计算顺序来减少误差。
+    
+    参数:
+        iterable: 可迭代对象，包含浮点数
+    
+    返回:
+        高精度求和结果
+    """</span>
+    sum_total = <span class="number">0.0</span>
+    compensation = <span class="number">0.0</span>
+    
+    <span class="keyword">for</span> num <span class="keyword">in</span> iterable:
+        t = sum_total + num
+        <span class="keyword">if</span> abs(sum_total) >= abs(num):
+            compensation += (sum_total - t) + num
+        <span class="keyword">else</span>:
+            compensation += (num - t) + sum_total
+        sum_total = t
+    
+    <span class="keyword">return</span> sum_total + compensation
+
+<span class="keyword">def</span> <span class="function">sum_pairwise</span>(iterable):
+    <span class="comment">"""
+    Pairwise求和算法 - 递归分治求和
+    
+    算法原理:
+        将序列分成两半，分别求和后再相加，
+        适用于大规模数据，精度最高。
+    
+    参数:
+        iterable: 可迭代对象，包含数字
+    
+    返回:
+        高精度求和结果
+    """</span>
+    arr = list(iterable)
+    
+    <span class="keyword">if</span> <span class="keyword">len</span>(arr) == <span class="number">0</span>:
+        <span class="keyword">return</span> <span class="number">0.0</span>
+    <span class="keyword">if</span> <span class="keyword">len</span>(arr) == <span class="number">1</span>:
+        <span class="keyword">return</span> float(arr[<span class="number">0</span>])
+    
+    mid = <span class="keyword">len</span>(arr) // <span class="number">2</span>
+    left_sum = sum_pairwise(arr[:mid])
+    right_sum = sum_pairwise(arr[mid:])
+    
+    <span class="keyword">return</span> left_sum + right_sum
+
+<span class="keyword">def</span> <span class="function">sum_bigint</span>(iterable):
+    <span class="comment">"""
+    大整数求和 - 支持任意精度
+    
+    参数:
+        iterable: 可迭代对象，包含整数或字符串表示的大整数
+    
+    返回:
+        Python大整数对象
+    """</span>
+    result = <span class="number">0</span>
+    <span class="keyword">for</span> num <span class="keyword">in</span> iterable:
+        result += int(num)
+    <span class="keyword">return</span> result</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- parallel.py -->
+        <div class="tab-content" id="parallel">
+            <div class="code-section">
+                <h2>📄 parallel.py - 并行求和模块</h2>
+                <div class="file-info">文件大小: ~4KB | 代码行数: 98行</div>
+                <button class="copy-btn" onclick="copyCode('parallel-code')">复制代码</button>
+                <div class="code-box">
+                    <pre id="parallel-code"><span class="comment"># -*- coding: utf-8 -*-</span>
+<span class="comment"># 并行求和模块</span>
+
+<span class="keyword">import</span> multiprocessing <span class="keyword">as</span> mp
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">from</span> .kahan <span class="keyword">import</span> sum_kahan, sum_neumaier
+
+<span class="keyword">def</span> <span class="function">_sum_chunk</span>(args):
+    <span class="comment">"""
+    内部函数：计算一个数据块的和
+    
+    参数:
+        args: (data_chunk, algorithm) 元组
+    
+    返回:
+        数据块的求和结果
+    """</span>
+    data_chunk, algorithm = args
+    
+    <span class="keyword">if</span> algorithm == <span class="string">'kahan'</span>:
+        <span class="keyword">return</span> sum_kahan(data_chunk)
+    <span class="keyword">elif</span> algorithm == <span class="string">'neumaier'</span>:
+        <span class="keyword">return</span> sum_neumaier(data_chunk)
+    <span class="keyword">else</span>:
+        <span class="keyword">return</span> sum(data_chunk)
+
+<span class="keyword">def</span> <span class="function">sum_parallel</span>(iterable, workers=<span class="number">None</span>, algorithm=<span class="string">'basic'</span>):
+    <span class="comment">"""
+    并行求和函数
+    
+    参数:
+        iterable: 可迭代对象，包含数字
+        workers: 进程数，默认为CPU核心数
+        algorithm: 求和算法，可选 'basic', 'kahan', 'neumaier'
+    
+    返回:
+        并行求和结果
+    """</span>
+    <span class="comment"># 确定进程数</span>
+    <span class="keyword">if</span> workers <span class="keyword">is</span> <span class="keyword">None</span>:
+        workers = mp.cpu_count()
+    
+    <span class="comment"># 转换为列表</span>
+    data = list(iterable)
+    n = <span class="keyword">len</span>(data)
+    
+    <span class="comment"># 如果数据量太小，直接求和</span>
+    <span class="keyword">if</span> n <= workers * <span class="number">1000</span>:
+        <span class="keyword">return</span> sum(data)
+    
+    <span class="comment"># 分割数据</span>
+    chunk_size = (n + workers - <span class="number">1</span>) // workers
+    chunks = [data[i*chunk_size : (i+<span class="number">1</span>)*chunk_size] 
+              <span class="keyword">for</span> i <span class="keyword">in</span> range(workers)]
+    
+    <span class="comment"># 创建进程池</span>
+    <span class="keyword">with</span> mp.Pool(processes=workers) <span class="keyword">as</span> pool:
+        <span class="comment"># 准备参数</span>
+        args = [(chunk, algorithm) <span class="keyword">for</span> chunk <span class="keyword">in</span> chunks]
+        <span class="comment"># 并行计算</span>
+        results = pool.map(_sum_chunk, args)
+    
+    <span class="comment"># 合并结果</span>
+    <span class="keyword">if</span> algorithm == <span class="string">'kahan'</span>:
+        <span class="keyword">return</span> sum_kahan(results)
+    <span class="keyword">elif</span> algorithm == <span class="string">'neumaier'</span>:
+        <span class="keyword">return</span> sum_neumaier(results)
+    <span class="keyword">else</span>:
+        <span class="keyword">return</span> sum(results)
+
+<span class="keyword">def</span> <span class="function">sum_numpy_parallel</span>(array, workers=<span class="number">None</span>):
+    <span class="comment">"""
+    使用NumPy进行并行求和
+    
+    参数:
+        array: NumPy数组
+        workers: 进程数，默认为CPU核心数
+    
+    返回:
+        求和结果
+    """</span>
+    <span class="keyword">if</span> workers <span class="keyword">is</span> <span class="keyword">None</span>:
+        workers = mp.cpu_count()
+    
+    arr = np.asarray(array)
+    n = arr.size
+    
+    <span class="keyword">if</span> n <= workers * <span class="number">1000</span>:
+        <span class="keyword">return</span> np.sum(arr)
+    
+    <span class="comment"># 使用多线程(NumPy内部优化)</span>
+    np.seterr(all=<span class="string">'ignore'</span>)
+    result = np.sum(arr)
+    
+    <span class="keyword">return</span> result</pre>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>💻 求和库源代码 | 使用 Python + NumPy + multiprocessing</p>
+        </footer>
+    </div>
+
+    <script>
+        // 标签切换
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.dataset.tab;
+                
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                btn.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // 复制代码
+        function copyCode(elementId) {
+            const code = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('代码已复制！');
+            });
+        }
+    </script>
+</body>
+</html>

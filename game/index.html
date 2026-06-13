@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 大学生活模拟器</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        body {
+            font-family: 'Press Start 2P', 'Courier New', monospace;
+            background: #1a1a2e;
+            min-height: 100vh;
+            color: #fff;
+            text-shadow: 2px 2px 0px #000;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(45deg, #0f0f1a 25%, transparent 25%),
+                linear-gradient(-45deg, #0f0f1a 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #0f0f1a 75%),
+                linear-gradient(-45deg, transparent 75%, #0f0f1a 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .screen {
+            display: none;
+            padding: 20px;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        #startScreen {
+            text-align: center;
+            padding-top: 100px;
+        }
+
+        .game-title {
+            font-size: 1.2rem;
+            color: #00ff88;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .game-subtitle {
+            font-size: 0.5rem;
+            color: #88ccff;
+            margin-bottom: 40px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: 3px solid #00ff88;
+            background: #2d2d44;
+            color: #00ff88;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.5rem;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 4px 4px 0px #000;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000;
+            background: #00ff88;
+            color: #1a1a2e;
+        }
+
+        #gameScreen {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #2d2d44;
+            border: 3px solid #555;
+        }
+
+        .day-info {
+            font-size: 0.5rem;
+            color: #ffaa00;
+        }
+
+        .time-info {
+            font-size: 0.45rem;
+            color: #88ccff;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            background: #2d2d44;
+            border: 2px solid #555;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.35rem;
+            color: #888;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 0.6rem;
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .stat-bar {
+            height: 8px;
+            background: #333;
+            border: 1px solid #555;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .stat-fill {
+            height: 100%;
+            background: #00ff88;
+            transition: width 0.2s;
+        }
+
+        .stat-fill.money { background: #ffd700; }
+        .stat-fill.social { background: #ff69b4; }
+        .stat-fill.energy { background: #88ccff; }
+        .stat-fill.mood { background: #ffaa00; }
+
+        .locations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .location-card {
+            background: #2d2d44;
+            border: 3px solid #555;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 3px 3px 0px #000;
+        }
+
+        .location-card:hover {
+            border-color: #ff69b4;
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px #000;
+        }
+
+        .location-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .location-name {
+            font-size: 0.45rem;
+            color: #fff;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .location-desc {
+            font-size: 0.35rem;
+            color: #888;
+        }
+
+        .event-log {
+            background: #1a1a2e;
+            border: 2px solid #555;
+            padding: 15px;
+            max-height: 150px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .event-log h3 {
+            font-size: 0.45rem;
+            color: #00ff88;
+            margin-bottom: 10px;
+        }
+
+        .log-item {
+            font-size: 0.35rem;
+            color: #aaa;
+            margin-bottom: 5px;
+            padding-left: 10px;
+            border-left: 3px solid #555;
+        }
+
+        .log-item.new {
+            border-color: #00ff88;
+            color: #88ccff;
+        }
+
+        .game-menu {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .menu-btn {
+            padding: 10px 20px;
+            border: 2px solid #555;
+            background: #2d2d44;
+            color: #fff;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.4rem;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .menu-btn:hover {
+            border-color: #00ff88;
+            color: #00ff88;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #2d2d44;
+            border: 4px solid #00ff88;
+            padding: 30px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 8px 8px 0px #000;
+        }
+
+        .modal-title {
+            font-size: 0.7rem;
+            color: #00ff88;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-text {
+            font-size: 0.45rem;
+            color: #aaa;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-choices {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .choice-btn {
+            padding: 12px;
+            border: 2px solid #555;
+            background: #1a1a2e;
+            color: #fff;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.4rem;
+            cursor: pointer;
+            transition: all 0.1s;
+            text-align: left;
+        }
+
+        .choice-btn:hover {
+            border-color: #ff69b4;
+            color: #ff69b4;
+        }
+
+        .ending-screen {
+            text-align: center;
+            padding-top: 50px;
+        }
+
+        .ending-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .ending-title {
+            font-size: 0.9rem;
+            color: #ffaa00;
+            margin-bottom: 15px;
+        }
+
+        .ending-desc {
+            font-size: 0.45rem;
+            color: #aaa;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 600px) {
+            .game-title {
+                font-size: 0.8rem;
+            }
+
+            .btn {
+                padding: 12px 20px;
+                font-size: 0.4rem;
+            }
+
+            .game-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .locations-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 开始界面 -->
+    <div id="startScreen" class="screen active">
+        <div class="game-title">🎮 大学生活模拟器</div>
+        <div class="game-subtitle">体验精彩的大学生活！</div>
+        <button class="btn" onclick="startNewGame()">🎮 开始游戏</button>
+        <button class="btn" onclick="loadGame()">📥 继续游戏</button>
+    </div>
+
+    <!-- 游戏界面 -->
+    <div id="gameScreen" class="screen">
+        <div class="game-header">
+            <div class="day-info">第 <span id="dayNum">1</span> 天</div>
+            <div class="time-info">⏰ <span id="timeOfDay">上午</span></div>
+            <div>
+                <button class="menu-btn" onclick="saveGame()">💾 保存</button>
+                <button class="menu-btn" onclick="openMenu()">☰ 菜单</button>
+            </div>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-item">
+                <span class="stat-label">📚 学业</span>
+                <span class="stat-value" id="statStudy">50</span>
+                <div class="stat-bar"><div class="stat-fill" id="barStudy" style="width: 50%"></div></div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">💰 金钱</span>
+                <span class="stat-value" id="statMoney">1000</span>
+                <div class="stat-bar"><div class="stat-fill money" id="barMoney" style="width: 50%"></div></div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">👥 社交</span>
+                <span class="stat-value" id="statSocial">40</span>
+                <div class="stat-bar"><div class="stat-fill social" id="barSocial" style="width: 40%"></div></div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">⚡ 体力</span>
+                <span class="stat-value" id="statEnergy">100</span>
+                <div class="stat-bar"><div class="stat-fill energy" id="barEnergy" style="width: 100%"></div></div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">😊 心情</span>
+                <span class="stat-value" id="statMood">70</span>
+                <div class="stat-bar"><div class="stat-fill mood" id="barMood" style="width: 70%"></div></div>
+            </div>
+        </div>
+
+        <div class="locations-grid">
+            <div class="location-card" data-location="classroom" onclick="handleLocationClick('classroom')">
+                <span class="location-icon">🏛️</span>
+                <span class="location-name">教学楼</span>
+                <span class="location-desc">认真学习</span>
+            </div>
+            <div class="location-card" data-location="library" onclick="handleLocationClick('library')">
+                <span class="location-icon">📖</span>
+                <span class="location-name">图书馆</span>
+                <span class="location-desc">安静学习</span>
+            </div>
+            <div class="location-card" data-location="dormitory" onclick="handleLocationClick('dormitory')">
+                <span class="location-icon">🏠</span>
+                <span class="location-name">宿舍</span>
+                <span class="location-desc">休息恢复</span>
+            </div>
+            <div class="location-card" data-location="canteen" onclick="handleLocationClick('canteen')">
+                <span class="location-icon">🍜</span>
+                <span class="location-name">食堂</span>
+                <span class="location-desc">补充能量</span>
+            </div>
+            <div class="location-card" data-location="club" onclick="handleLocationClick('club')">
+                <span class="location-icon">🎭</span>
+                <span class="location-name">社团中心</span>
+                <span class="location-desc">结交朋友</span>
+            </div>
+            <div class="location-card" data-location="outside" onclick="handleLocationClick('outside')">
+                <span class="location-icon">🌆</span>
+                <span class="location-name">校外区域</span>
+                <span class="location-desc">打工赚钱</span>
+            </div>
+        </div>
+
+        <div class="event-log">
+            <h3>📜 事件日志</h3>
+            <div id="eventLogContent"></div>
+        </div>
+    </div>
+
+    <!-- 事件弹窗 -->
+    <div id="eventModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2 class="modal-title" id="eventTitle"></h2>
+            <p class="modal-text" id="eventDesc"></p>
+            <div class="modal-choices" id="eventChoices"></div>
+        </div>
+    </div>
+
+    <!-- 结局界面 -->
+    <div id="endingScreen" class="screen">
+        <div class="ending-icon" id="endingIcon">🎓</div>
+        <div class="ending-title" id="endingTitle">结局</div>
+        <div class="ending-desc" id="endingDesc"></div>
+        <button class="btn" onclick="goToStart()">🏠 返回主页</button>
+        <button class="btn" onclick="startNewGame()">🔄 重新开始</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

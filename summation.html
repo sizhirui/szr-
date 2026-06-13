@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>求和库 - 数列求和的多种方法</title>
+    <link rel="stylesheet" href="summation.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="page-container">
+        <!-- 头部 -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="title">Σ 求和库</h1>
+                <p class="subtitle">一题多解 · 探索数列求和的奥秘</p>
+            </div>
+        </header>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 等差数列求和 -->
+            <section class="section" id="arithmetic">
+                <div class="section-header">
+                    <div class="section-icon">📐</div>
+                    <div class="section-title-wrap">
+                        <h2 class="section-title">等差数列求和</h2>
+                        <p class="section-desc">从高斯的故事开始</p>
+                    </div>
+                </div>
+                
+                <div class="problem-card">
+                    <div class="problem-header">
+                        <span class="problem-label">问题</span>
+                        <span class="problem-tag">经典</span>
+                    </div>
+                    <div class="problem-content">
+                        <p>求等差数列前 n 项和：<span class="math">Sₙ = a₁ + a₂ + a₃ + ... + aₙ</span></p>
+                        <p>其中公差为 d，即 <span class="math">aₖ = a₁ + (k-1)d</span></p>
+                    </div>
+                </div>
+
+                <div class="methods-grid">
+                    <!-- 方法1：高斯配对法 -->
+                    <div class="method-card" data-method="gauss">
+                        <div class="method-header">
+                            <span class="method-number">01</span>
+                            <h3 class="method-title">高斯配对法</h3>
+                        </div>
+                        <div class="method-content">
+                            <div class="method-formula">
+                                <p>将数列正序与倒序相加：</p>
+                                <div class="formula-box">
+                                    Sₙ = a₁ + a₂ + ... + aₙ<br>
+                                    Sₙ = aₙ + aₙ₋₁ + ... + a₁<br>
+                                    <hr>
+                                    2Sₙ = n(a₁ + aₙ)<br>
+                                    Sₙ = n(a₁ + aₙ)/2
+                                </div>
+                            </div>
+                            <div class="method-example">
+                                <p>例：1+2+3+...+100</p>
+                                <p class="result">S = 100×(1+100)/2 = 5050</p>
+                            </div>
+                        </div>
+                        <div class="method-footer">
+                            <span class="method-tags">
+                                <span class="tag">直观</span>
+                                <span class="tag">对称</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 方法2：通项公式法 -->
+                    <div class="method-card" data-method="general">
+                        <div class="method-header">
+                            <span class="method-number">02</span>
+                            <h3 class="method-title">通项公式法</h3>
+                        </div>
+                        <div class="method-content">
+                            <div class="method-formula">
+                                <p>利用通项 <span class="math">aₖ = a₁ + (k-1)d</span> 展开求和：</p>
+                                <div class="formula-box">
+                                    Sₙ = Σ(a₁ + (k-1)d)<br>
+                                    = n·a₁ + d·Σ(k-1)<br>
+                                    = n·a₁ + d·n(n-1)/2
+                                </div>
+                            </div>
+                            <div class="method-example">
+                                <p>例：3+5+7+9+11（a₁=3, d=2, n=5）</p>
+                                <p class="result">S = 5×3 + 2×5×4/2 = 40</p>
+                            </div>
+                        </div>
+                        <div class="method-footer">
+                            <span class="method-tags">
+                                <span class="tag">代数</span>
+                                <span class="tag">展开</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 方法3：数学归纳法 -->
+                    <div class="method-card" data-method="induction">
+                        <div class="method-header">
+                            <span class="method-number">03</span>
+                            <h3 class="method-title">数学归纳法</h3>
+                        </div>
+                        <div class="method-content">
+                            <div class="method-formula">
+                                <p>证明 <span class="math">Sₙ = n(a₁ + aₙ)/2</span>：</p>
+                                <div class="formula-box">
+                                    1. 当 n=1 时，S₁ = a₁，成立<br>
+                                    2. 假设 n=k 时成立<br>
+                                    3. n=k+1 时，<br>
+                                    Sₖ₊₁ = Sₖ + aₖ₊₁ = ... = (k+1)(a₁+aₖ₊₁)/2
+                                </div>
+                            </div>
+                            <div class="method-example">
+                                <p>验证：n=3, a₁=2, d=3</p>
+                                <p class="result">S₃ = 2+5+8 = 15 = 3×(2+8)/2 ✔</p>
+                            </div>
+                        </div>
+                        <div class="method-footer">
+                            <span class="method-tags">
+                                <span class="tag">严谨</span>
+                                <span class="tag">证明</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 等比数列求和 -->
+            <section class="section" id="geometric">
+                <div class="section-header">
+                    <div class="section-icon">⚡</div>
+                    <div class="section-title-wrap">
+                        <h2 class="section-title">等比数列求和</h2>
+                        <p class="section-desc">指数增长的奥秘</p>
+                    </div>
+                </div>
+
+                <div class="problem-card">
+                    <div class="problem-header">
+                        <span class="problem-label">问题</span>
+                        <span class="problem-tag">重要</span>
+                    </div>
+                    <div class="problem-content">
+                        <p>求等比数列前 n 项和：<span class="math">Sₙ = a₁ + a₁r + a₁r² + ... + a₁rⁿ⁻¹</span></p>
+                        <p>其中公比为 r，即 <span class="math">aₖ = a₁rᵏ⁻¹</span></p>
+                    </div>
+                </div>
+
+                <div class="methods-grid">
+                    <!-- 方法1：错位相减法 -->
+                    <div class="method-card" data-method="subtraction">
+                        <div class="method-header">
+                            <span class="method-number">01</span>
+                            <h3 class="method-title">错位相减法</h3>
+                        </div>
+                        <div class="method-content">
+                            <div class="method-formula">
+                                <p>经典方法：将原式乘以公比后相减</p>
+                                <div class="formula-box">
+                                    Sₙ = a₁ + a₁r + a₁r² + ... + a₁rⁿ⁻¹<br>
+                                    rSₙ = a₁r + a₁r² + ... + a₁rⁿ<br>
+                                    <hr>
+                                    Sₙ(1-r) = a₁(1-rⁿ)<br>
+                                    Sₙ = a₁(1-rⁿ)/(1-r)
+                                </div>
+                            </div>
+                            <div class="method-example">
+                                <p>例：1+2+4+8+16（a₁=1, r=2, n=5）</p>
+                                <p class="result">S = 1×(1-32)/(1-2) = 31</p>
+                            </div>
+                        </div>
+                        <div class="method-footer">
+                            <span class="method-tags">
+                                <span class="tag">经典</span>
+                                <span class="tag">消项</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 方法2：递推公式法 -->
+                    <div class="method-card" data-method="recursive">
+                        <div class="method-header">
+                            <span class="method-number">02</span>
+                            <h3 class="method-title">递推公式法</h3>
+                        </div>
+                        <div class="method-content">
+                            <div class="method-formula">
+                                <p>利用递推关系求解：</p>
+                                <div class="formula-box">
+                                    Sₙ = Sₙ₋₁ + aₙ = Sₙ₋₁ + a₁rⁿ⁻¹<br>
+                                    特征方程：x = rx + a₁<br>
+                                    齐次解 + 特解 = a₁(1-rⁿ)/(1-r)
+                                </div>
+                            </div>
+                            <div class="method-example">
+                                <p>例：3+6+12+24（a₁=3, r=2, n=4）</p>
+                                <p class="result">S₄ = 3×(1-16)/(1-2) = 45</p>
+                            </div>
+                        </div>
+                        <div class="method-footer">
+                            <span class="method-tags">
+                                <span class="tag">递推</span>
+                                <span class="tag">差分</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 方法3：无穷级数逼近 -->
+                    <div class="method-card" data-method="infinite">
+                        <div class="method-header">
+                            <span class="method-number">03</span>
+                            <h3 class="method-title">无穷级数法</h3>
+                        </div>
+                        <div class="method-content">
+                            <div class="method-formula">
+                                <p>当 |r| < 1 时，无穷级数收敛：</p>
+                                <div class="formula-box">
+                                    S∞ = limₙ→∞ Sₙ = a₁/(1-r)<br>
+                                    Sₙ = S∞ - a₁rⁿ/(1-r)<br>
+                                    = a₁(1-rⁿ)/(1-r)
+                                </div>
+                            </div>
+                            <div class="method-example">
+                                <p>例：1 + 1/2 + 1/4 + 1/8（无穷项）</p>
+                                <p class="result">S∞ = 1/(1-1/2) = 2</p>
+                            </div>
+                        </div>
+                        <div class="method-footer">
+                            <span class="method-tags">
+                                <span class="tag">极限</span>
+                                <span class="tag">收敛</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 自然数平方和 -->
+            <section class="section" id="square">
+                <div class="section-header">
+                    <div class="section-icon">🔲</div>
+                    <div class="section-title-wrap">
+                        <h2 class="section-title">自然数平方和</h2>
+                        <p class="section-desc">从平面到空间</p>
+                    </div>
+                </div>
+
+                <div class="problem-card">
+                    <div class="problem-header">
+                        <span class="problem-label">问题</span>
+                        <span class="problem-tag">进阶</span>
+                    </div>
+                    <div class="problem-content">
+                        <p>求前 n 个自然数的平方和：<span class="math">Sₙ = 1² + 2² + 3² + ... + n²</span></p>
+                    </div>
+                </div>
+
+                <div class="methods-grid">
+                    <!-- 方法1：利用立方差公式 -->
+                    <div class="method-card" data-method="cube">
+                        <div class="method-header">
+                            <span class="method-number">01</span>
+                            <h3 class="method-title">立方差公式法</h3>
+                        </div>
+                        <div class="method-content">
+                            <div class="method-formula">
+                                <p>利用恒等式 <span class="math">(k+1)³ - k³ = 3k² + 3k + 1</span></p>
+                                <div class="formula-box">
+                                    Σ[(k+1)³ - k³] = 3Σk² + 3Σk + Σ1<br>
+                                    (n+1)³ - 1 = 3Sₙ + 3n(n+1)/2 + n<br>
+                                    Sₙ = n(n+1)(2n+1)/6
+                                </div>
+                            </div>
+                            <div class="method-example">
+                                <p>例：1²+2²+3²+4²+5²</p>
+                                <p class="result">S = 5×6×11/6 = 55</p>
+                            </div>
+                        </div>
+                        <div class="method-footer">
+                            <span class="method-tags">
+                                <span class="tag">恒等式</span>
+                                <span class="tag">裂项</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 方法2：组合恒等式法 -->
+                    <div class="method-card" data-method="combination">
+                        <div class="method-header">
+                            <span class="method-number">02</span>
+                            <h3 class="method-title">组合恒等式法</h3>
+                        </div>
+                        <div class="method-content">
+                            <div class="method-formula">
+                                <p>利用组合数与平方的关系：</p>
+                                <div class="formula-box">
+                                    k² = 2C(k,2) + C(k,1)<br>
+                                    Sₙ = Σk² = 2ΣC(k,2) + ΣC(k,1)<br>
+                                    = 2C(n+1,3) + C(n+1,2)<br>
+                                    = n(n+1)(2n+1)/6
+                                </div>
+                            </div>
+                            <div class="method-example">
+                                <p>例：1²+2²+3²+4²</p>
+                                <p class="result">S = 4×5×9/6 = 30</p>
+                            </div>
+                        </div>
+                        <div class="method-footer">
+                            <span class="method-tags">
+                                <span class="tag">组合</span>
+                                <span class="tag">计数</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 方法3：几何直观法 -->
+                    <div class="method-card" data-method="geometric">
+                        <div class="method-header">
+                            <span class="method-number">03</span>
+                            <h3 class="method-title">几何直观法</h3>
+                        </div>
+                        <div class="method-content">
+                            <div class="method-formula">
+                                <p>三维立方体堆叠的体积计算：</p>
+                                <div class="formula-box">
+                                    将 n³ 分解为三层金字塔<br>
+                                    n³ = Σ(2k-1)k（k=1..n）<br>
+                                    求和得：Sₙ = n(n+1)(2n+1)/6
+                                </div>
+                            </div>
+                            <div class="method-example">
+                                <p>例：三维空间中的平方和</p>
+                                <p class="result">可视化证明：立方体体积分解</p>
+                            </div>
+                        </div>
+                        <div class="method-footer">
+                            <span class="method-tags">
+                                <span class="tag">几何</span>
+                                <span class="tag">直观</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 交互式计算器 -->
+        <section class="calculator-section">
+            <div class="calculator-container">
+                <h3 class="calculator-title">🧮 求和计算器</h3>
+                <div class="calculator-content">
+                    <div class="input-group">
+                        <label>选择数列类型：</label>
+                        <select id="sequenceType">
+                            <option value="arithmetic">等差数列</option>
+                            <option value="geometric">等比数列</option>
+                            <option value="square">自然数平方和</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group" id="arithmeticInputs">
+                        <label>首项 a₁：</label>
+                        <input type="number" id="a1" value="1">
+                        <label>公差 d：</label>
+                        <input type="number" id="d" value="1">
+                        <label>项数 n：</label>
+                        <input type="number" id="n" value="10">
+                    </div>
+                    
+                    <div class="input-group hidden" id="geometricInputs">
+                        <label>首项 a₁：</label>
+                        <input type="number" id="ga1" value="1">
+                        <label>公比 r：</label>
+                        <input type="number" id="r" value="2">
+                        <label>项数 n：</label>
+                        <input type="number" id="gn" value="5">
+                    </div>
+                    
+                    <div class="input-group hidden" id="squareInputs">
+                        <label>项数 n：</label>
+                        <input type="number" id="sn" value="10">
+                    </div>
+                    
+                    <button class="calc-btn" onclick="calculateSum()">计算求和</button>
+                    
+                    <div class="result-display" id="resultDisplay">
+                        <p>点击计算查看结果</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>探索数学之美 · 一题多解的思维训练</p>
+            <p class="footer-note">理解多种方法，培养数学思维的灵活性</p>
+        </footer>
+    </div>
+
+    <script src="summation.js"></script>
+</body>
+</html>
