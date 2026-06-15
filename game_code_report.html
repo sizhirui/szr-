@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校生游戏 - 源代码文档</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Courier New', monospace; background: #fff; color: #333; padding: 30px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #00ff88; }
+        header h1 { font-size: 1.8rem; color: #333; margin-bottom: 10px; }
+        header p { color: #666; }
+        .file-section { margin-bottom: 30px; page-break-inside: avoid; }
+        .file-header { background: #00ff88; color: #1a1a2e; padding: 12px 15px; font-weight: bold; margin-bottom: 15px; }
+        pre { background: #f8f8f8; padding: 20px; border: 1px solid #ddd; overflow-x: auto; font-size: 12px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+        code { font-family: 'Courier New', monospace; }
+        @media print { body { padding: 15px; } .file-header { background: #e0e0e0; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎮 校生游戏 - 源代码文档</h1>
+            <p>大学生活模拟器 | College Life Simulator</p>
+        </header>
+
+        <div class="file-section">
+            <div class="file-header">📜 script.js - 游戏主逻辑</div>
+            <pre><code>// 游戏状态
+let gameData = {
+    day: 1, timeOfDay: 'morning', study: 50, money: 1000,
+    social: 40, energy: 100, mood: 70,
+    npcs: { liying: { favor: 20 }, wanghao: { favor: 15 }, 
+            chenyue: { favor: 25 }, zhangwei: { favor: 30 }, linxia: { favor: 10 } },
+    eventLog: ['欢迎来到大学生活！选择一个地点开始你的第一天吧。']
+};
+
+// UI元素引用
+const screens = {
+    start: document.getElementById('startScreen'),
+    game: document.getElementById('gameScreen'),
+    ending: document.getElementById('endingScreen')
+};
+
+const stats = {
+    study: { bar: document.getElementById('barStudy'), val: document.getElementById('statStudy') },
+    money: { bar: document.getElementById('barMoney'), val: document.getElementById('statMoney') },
+    social: { bar: document.getElementById('barSocial'), val: document.getElementById('statSocial') },
+    energy: { bar: document.getElementById('barEnergy'), val: document.getElementById('statEnergy') },
+    mood: { bar: document.getElementById('barMood'), val: document.getElementById('statMood') }
+};
+
+// 地点配置
+const locations = {
+    classroom: { name: '教学楼', icon: '🏛️', effects: { study: 15, energy: -15, mood: -5 }, ... },
+    library: { name: '图书馆', icon: '📖', effects: { study: 20, energy: -20, mood: -10 }, ... },
+    dormitory: { name: '宿舍', icon: '🏠', effects: { energy: 40, mood: 10, study: -5 }, ... },
+    canteen: { name: '食堂', icon: '🍜', effects: { energy: 25, mood: 5, money: -15 }, ... },
+    club: { name: '社团中心', icon: '🎭', effects: { social: 20, energy: -15, mood: 15 }, ... },
+    outside: { name: '校外区域', icon: '🌆', effects: { money: 80, energy: -25, social: 5 }, ... }
+};
+
+// 结局配置
+const endings = {
+    scholar: { icon: '🏆', title: '学霸结局', desc: '你以优异的成绩毕业...' },
+    socialite: { icon: '🌟', title: '社交达人', desc: '你在大学期间结交了无数好友...' },
+    wealthy: { icon: '💰', title: '商业精英', desc: '你在大学期间积累了第一桶金...' },
+    balanced: { icon: '🎓', title: '全面发展', desc: '你在学业、社交和生活之间找到了完美平衡！' },
+    normal: { icon: '🎒', title: '平凡之路', desc: '普普通通的大学生活，也是一种幸福。' }
+};
+
+// 游戏函数
+function startNewGame() { /* 初始化新游戏 */ }
+function loadGame() { /* 加载存档 */ }
+function saveGame() { /* 保存游戏 */ }
+function updateUI() { /* 更新界面显示 */ }
+function handleLocationClick(locationId) { /* 处理地点点击 */ }
+function applyEffects(effects) { /* 应用属性变化 */ }
+function advanceTime() { /* 时间推进 */ }
+function checkGameEnd() { /* 检查游戏结束条件 */ }
+function showEnding() { /* 显示结局 */ }</code></pre>
+        </div>
+
+        <div class="file-section">
+            <div class="file-header">📊 data.js - 游戏数据</div>
+            <pre><code>// 地点数据
+const locations = {
+    classroom: {
+        name: '教学楼', icon: '🏛️', description: '认真学习，提升学业成绩',
+        effects: { study: 15, energy: -20, mood: -5 },
+        events: ['class_event_1', 'class_event_2', 'class_event_3']
+    },
+    library: {
+        name: '图书馆', icon: '📖', description: '安静的学习环境',
+        effects: { study: 20, energy: -15, mood: 5 },
+        events: ['library_event_1', 'library_event_2']
+    },
+    dormitory: {
+        name: '宿舍', icon: '🏠', description: '休息恢复体力',
+        effects: { energy: 30, mood: 5, study: -5 },
+        events: ['dorm_event_1', 'dorm_event_2', 'dorm_event_3']
+    },
+    canteen: {
+        name: '食堂', icon: '🍜', description: '补充能量，恢复体力',
+        effects: { energy: 25, mood: 10, money: -20 },
+        events: ['canteen_event_1', 'canteen_event_2']
+    },
+    club: {
+        name: '社团中心', icon: '🎭', description: '结交朋友，提升社交',
+        effects: { social: 15, energy: -15, mood: 10, study: -5 },
+        events: ['club_event_1', 'club_event_2', 'club_event_3']
+    },
+    outside: {
+        name: '校外区域', icon: '🌆', description: '打工赚钱或逛街',
+        effects: { money: 100, energy: -25, mood: -5, study: -5 },
+        events: ['outside_event_1', 'outside_event_2', 'outside_event_3']
+    }
+};
+
+// 随机事件数据（部分示例）
+const events = {
+    class_event_1: {
+        title: '课堂提问',
+        description: '老师突然点名提问，你能回答出来吗？',
+        choices: [
+            { text: '积极回答', effects: { study: 10, social: 5, mood: 5 } },
+            { text: '低头装睡', effects: { mood: -10, study: -5 } },
+            { text: '求助同学', effects: { social: -5, study: 5 } }
+        ]
+    },
+    // ... 更多事件定义
+};
+
+// NPC数据
+const npcs = {
+    liying: { name: '李颖', avatar: '👩‍🎓', description: '学霸级人物，成绩优异', ... },
+    wanghao: { name: '王浩', avatar: '👨‍🎤', description: '社团活跃分子，社交达人', ... },
+    chenyue: { name: '陈悦', avatar: '👩‍🍳', description: '温柔善良的食堂小姐姐', ... },
+    zhangwei: { name: '张伟', avatar: '👨‍💼', description: '你的室友，游戏爱好者', ... },
+    linxia: { name: '林夏', avatar: '👩‍🎨', description: '文艺社社长，多才多艺', ... }
+};
+
+// 结局判定函数
+function determineEnding(gameData) {
+    // 根据玩家属性判断结局
+    const { study, money, social, energy, mood, npcs } = gameData;
+    const maxFavor = Math.max(...Object.values(npcs).map(n => n.favor));
+    
+    if (maxFavor >= 80) return endings.lover;
+    if (study >= 80) return endings.academic;
+    if (social >= 80) return endings.social;
+    if (money >= 5000) return endings.wealthy;
+    if (energy >= 80) return endings.healthy;
+    if (mood >= 80) return endings.happy;
+    if (study >= 60 && social >= 60 && money >= 60 && energy >= 60 && mood >= 60) 
+        return endings.balanced;
+    return endings.normal;
+}</code></pre>
+        </div>
+
+        <div class="file-section">
+            <div class="file-header">🎨 style.css - 游戏样式</div>
+            <pre><code>* {
+    margin: 0; padding: 0; box-sizing: border-box;
+    image-rendering: pixelated; image-rendering: crisp-edges;
+}
+
+body {
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    background: #1a1a2e; min-height: 100vh;
+    color: #fff; text-shadow: 2px 2px 0px #000;
+}
+
+/* 马赛克背景效果 */
+body::before {
+    content: ''; position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image: 
+        linear-gradient(45deg, #0f0f1a 25%, transparent 25%),
+        linear-gradient(-45deg, #0f0f1a 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #0f0f1a 75%),
+        linear-gradient(-45deg, transparent 75%, #0f0f1a 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    pointer-events: none; z-index: -1;
+}
+
+/* 屏幕容器 */
+.screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 10px; }
+.screen.hidden { display: none; }
+
+/* 按钮样式 */
+.btn {
+    padding: 15px 25px; border: 3px solid;
+    background: #444466; color: #fff;
+    font-family: 'PressStart2P', monospace;
+    font-size: 0.6rem; cursor: pointer;
+    transition: all 0.1s; box-shadow: 3px 3px 0px #000;
+}
+
+.btn:hover { transform: translate(2px, 2px); box-shadow: 1px 1px 0px #000; }
+
+.btn-primary { border-color: #00ff88; color: #00ff88; }
+.btn-primary:hover { background: #00ff88; color: #1a1a2e; }
+
+/* 属性条样式 */
+.stat-bar { height: 8px; background: #333; border: 1px solid #555; overflow: hidden; }
+.stat-fill { height: 100%; background: #00ff88; transition: width 0.2s; }
+.stat-fill.money { background: #ffd700; }
+.stat-fill.social { background: #ff69b4; }
+.stat-fill.energy { background: #88ccff; }
+.stat-fill.mood { background: #ffaa00; }
+
+/* 地点卡片 */
+.location-card {
+    background: #1a1a2e; border: 2px solid #555;
+    padding: 15px; text-align: center; cursor: pointer;
+    transition: all 0.1s; box-shadow: 3px 3px 0px #000;
+}
+
+.location-card:hover {
+    border-color: #ff69b4; transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #000;
+}
+
+/* 弹窗样式 */
+.modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8); display: flex;
+    align-items: center; justify-content: center; z-index: 1000;
+    padding: 10px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .locations-grid { grid-template-columns: repeat(2, 1fr); }
+    .stats-container { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 480px) {
+    .locations-grid { grid-template-columns: 1fr; }
+    .stats-container { grid-template-columns: repeat(2, 1fr); }
+}</code></pre>
+        </div>
+
+        <footer style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 12px;">
+            <p>校生游戏 - 大学生活模拟器 | 源代码文档</p>
+            <p>© 2025 College Life Simulator</p>
+        </footer>
+    </div>
+</body>
+</html>
